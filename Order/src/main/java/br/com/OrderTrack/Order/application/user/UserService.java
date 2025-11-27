@@ -1,6 +1,8 @@
 package br.com.OrderTrack.Order.application.user;
 
+import br.com.OrderTrack.Order.application.user.dto.SignInDTO;
 import br.com.OrderTrack.Order.application.user.dto.SignUpDTO;
+import br.com.OrderTrack.Order.infrastructure.security.TokenService;
 import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
 import br.com.OrderTrack.Order.infrastructure.profile.IProfileRepository;
 import br.com.OrderTrack.Order.infrastructure.user.IUserRepository;
@@ -25,6 +27,12 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager manager;
+
+    @Autowired
+    private TokenService tokenService;
+
     public void signUp(@Valid SignUpDTO dto) {
 
         var signedUpUser = repository.existsByEmail(dto.email());
@@ -35,6 +43,13 @@ public class UserService implements UserDetailsService {
 
         var user = new UserEntity(dto, password, profile);
         repository.save(user);
+    }
+
+    public String singIn(@Valid SignInDTO dto) {
+        var authenticationManager = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
+        var authentication = manager.authenticate(authenticationManager);
+
+        return tokenService.generateToken((UserEntity) authentication.getPrincipal());
     }
 
     @Override
