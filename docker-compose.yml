@@ -1,0 +1,98 @@
+version: '3.8'
+
+networks:
+  order-track-network:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+
+  order-service:
+    build: ../OrderTrack/Order
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  payment-service:
+    build: ../OrderTrack/Payment
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  track-service:
+    build: ../OrderTrack/Track
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  common-events-service:
+    build: ../OrderTrack/CommonEvents
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  gateway-service:
+    build: ../OrderTrack/Gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  notification-service:
+    build: ../OrderTrack/Notification
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  sonarqube:
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_JDBC_URL=jdbc:mysql://mysql:3306/sonarqube
+    volumes:
+        - sonarqube_data:/opt/sonarqube/data
+        - sonarqube_extensions:/opt/sonarqube/extensions
+    depends_on:
+      - mysql
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - order-track-network
+    ports:
+      - "9090:9090"

@@ -1,0 +1,10 @@
+global:
+  scrap_interval: 6s # De quanto em quanto tempo ele vai buscar as informações
+
+scrap_configs:
+  - job_name: "order-track"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["localhost:8080"]
+        labels:
+          application: "api-order-track"

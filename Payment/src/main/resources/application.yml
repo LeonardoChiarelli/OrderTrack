@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: "Payment"
+  datasource:
+    url:
+    username:
+    password:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8082
+
+logging:
+  level:
+    root: INFO
+
+app:
+  security:
+    token:
+      secret: "12345678"
