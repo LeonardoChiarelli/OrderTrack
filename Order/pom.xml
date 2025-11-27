@@ -40,11 +40,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-        <dependency>
-            <groupId>br.com.OrderTrack</groupId>
-            <artifactId>CommonEvents</artifactId>
-        </dependency>
 	</dependencies>
 
 	<build>

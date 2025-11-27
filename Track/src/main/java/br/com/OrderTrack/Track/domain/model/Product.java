@@ -1,6 +1,6 @@
 package br.com.OrderTrack.Track.domain.model;
 
-import br.com.OrderTrack.Order.domain.dto.CreateProductDTO;
+import br.com.OrderTrack.Track.domain.dto.CreateProductDTO;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
