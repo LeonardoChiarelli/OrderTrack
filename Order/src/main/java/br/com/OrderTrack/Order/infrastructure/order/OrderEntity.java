@@ -1,7 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.order;
 
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
-import br.com.OrderTrack.Order.infrastructure.order.valueObject.Address;
+import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -25,13 +26,13 @@ public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     private String consumerName;
     private String consumerEmail;
 
     @Embedded
-    private Address shippingAddress;
+    private AddressEntity shippingAddressEntity;
 
     private LocalDateTime orderDate;
 
@@ -43,10 +44,10 @@ public class OrderEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> items = new ArrayList<>();
 
-    public OrderEntity(@Valid CreateOrderDTO dto, Address address, BigDecimal totalPrice, List<OrderItemEntity> items) {
+    public OrderEntity(@Valid CreateOrderDTO dto, AddressEntity addressEntity, BigDecimal totalPrice, List<OrderItemEntity> items) {
         this.consumerName = dto.consumerName();
         this.consumerEmail = dto.consumerEmail();
-        this.shippingAddress = address;
+        this.shippingAddressEntity = addressEntity;
         this.orderDate = LocalDateTime.now();
         this.totalPrice = totalPrice;
         this.status = OrderStatus.NEW;

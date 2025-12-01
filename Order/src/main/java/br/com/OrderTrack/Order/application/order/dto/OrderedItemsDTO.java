@@ -4,17 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record OrderedItemsDTO(
         Long id,
 
         @NotBlank
-        String productName,
+        List<String> productsName,
 
         @NotNull
-        Integer quantity,
-
-        @NotNull
-        BigDecimal unitPrice
+        Integer quantity
 ) {
 }

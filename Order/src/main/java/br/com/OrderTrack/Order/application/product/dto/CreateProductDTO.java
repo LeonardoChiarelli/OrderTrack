@@ -6,9 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record CreateProductDTO(
-        Long id,
+        UUID id,
 
         @NotBlank
         String name,

@@ -2,9 +2,9 @@ spring:
   application:
     name: "Order"
   datasource:
-    url:
-    username:
-    password:
+    url: ${ORDER_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,4 +28,4 @@ logging:
 app:
   security:
     token:
-      secret: "12345678"
+      secret: ${TOKEN_PASSWORD}

@@ -6,9 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public record CreateOrderDTO(
-        Long id,
+        UUID id,
 
         @NotBlank
         String consumerName,

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Address {
+public class AddressEntity {
     public String street;
     public String neighborhood;
     public String postalCode;
@@ -21,7 +21,7 @@ public class Address {
     public String number;
     public String complement;
 
-    public Address(@NotNull @Valid AddressDTO addressDTO) {
+    public AddressEntity(@NotNull @Valid AddressDTO addressDTO) {
         this.street = addressDTO.street();
         this.neighborhood = addressDTO.neighborhood();
         this.postalCode = addressDTO.postalCode();
