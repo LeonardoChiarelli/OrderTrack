@@ -1,7 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.security;
 
 import br.com.OrderTrack.Order.infrastructure.user.IUserRepository;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

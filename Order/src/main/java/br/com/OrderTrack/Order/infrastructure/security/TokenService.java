@@ -1,7 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.security;
 
 import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

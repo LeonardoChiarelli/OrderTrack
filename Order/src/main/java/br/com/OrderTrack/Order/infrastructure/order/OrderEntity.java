@@ -25,7 +25,7 @@ import java.util.UUID;
 public class OrderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String consumerName;
@@ -41,17 +41,24 @@ public class OrderEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<OrderItemEntity> items = new ArrayList<>();
 
-    public OrderEntity(@Valid CreateOrderDTO dto, AddressEntity addressEntity, BigDecimal totalPrice, List<OrderItemEntity> items) {
+    public OrderEntity(@Valid CreateOrderDTO dto, AddressEntity addressEntity, List<OrderItemEntity> items) {
         this.consumerName = dto.consumerName();
         this.consumerEmail = dto.consumerEmail();
         this.shippingAddressEntity = addressEntity;
         this.orderDate = LocalDateTime.now();
-        this.totalPrice = totalPrice;
+        this.totalPrice = items.stream()
+                .map(OrderItemEntity::calculateTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         this.status = OrderStatus.NEW;
         this.items = items;
+        items.forEach(i -> i.setOrder(this));
     }
 
     public void changeStatus(@NotNull OrderStatus status) {

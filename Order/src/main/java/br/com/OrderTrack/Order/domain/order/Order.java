@@ -1,10 +1,11 @@
 package br.com.OrderTrack.Order.domain.order;
 
-import br.com.OrderTrack.Order.application.exception.DomainException;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.DomainException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import br.com.OrderTrack.Order.domain.order.valueObject.Address;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,35 +19,30 @@ public class Order {
     private final LocalDateTime orderDate;
     private final BigDecimal totalPrice;
     private OrderStatus status;
-    private final List<OrderItem> items = new ArrayList<>();
+    private final List<OrderItem> items;
 
-    private Order(UUID id,
-                  String consumerName,
+    private Order(String consumerName,
                   String consumerEmail,
                   Address shippingAddress,
-                  LocalDateTime orderDate,
-                  BigDecimal totalPrice,
-                  OrderStatus status,
                   List<OrderItem> items) {
-        if (id == null ||
-                consumerName.isBlank() ||
+        if (consumerName.isBlank() ||
                 consumerEmail.isBlank() ||
                 shippingAddress == null ||
-                orderDate == null ||
-                totalPrice.compareTo(BigDecimal.ZERO) <= 0 ||
-                status == null ||
                 items.isEmpty()) {
             throw new DomainException("All order core must be provided.");
         }
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.consumerName = consumerName;
         this.consumerEmail = consumerEmail;
         this.shippingAddress = shippingAddress;
-        this.orderDate = orderDate;
-        this.totalPrice = totalPrice;
-        this.status = status;
-        this.items.addAll(items);
+        this.orderDate = LocalDateTime.now();
+        this.totalPrice = items.stream()
+                .map(OrderItem::calculateTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.status = OrderStatus.NEW;
+        this.items = items;
+        items.forEach(i -> i.setOrder(this));
     }
 
     public static OrderBuilder builder() {
@@ -54,6 +50,7 @@ public class Order {
     }
 
     public void changeStatus(OrderStatus status) { this.status = status; }
+
 
     public UUID getId() {
         return id;
@@ -109,13 +106,6 @@ public class Order {
 
         public OrderBuilder() {}
 
-        public BigDecimal calculateTotalPrice() {
-            return  (BigDecimal) items.stream()
-                    .map(item -> {
-                        return item.getProduct().getPrice().muliply(BigDecimal.valueOf(item.getQuantity()));
-                    });
-        }
-
         public OrderBuilder consumerName(String consumerName) {
             this.consumerName = consumerName;
             return this;
@@ -149,14 +139,12 @@ public class Order {
                 items.isEmpty()
             ) { throw new ValidationException("All Order core must be provided."); }
 
-            return new Order(UUID.randomUUID(),
+            return new Order(
                     this.consumerName,
                     this.consumerEmail,
                     this.shippingAddress,
-                    LocalDateTime.now(),
-                    calculateTotalPrice(),
-                    OrderStatus.NEW,
-                    items);
+                    items
+            );
         }
     }
 }

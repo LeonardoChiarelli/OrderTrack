@@ -2,7 +2,7 @@ package br.com.OrderTrack.Order.application.order;
 
 import br.com.OrderTrack.Order.application.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.application.exception.InventoryException;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import br.com.OrderTrack.Order.application.helper.HelperMethod;
 import br.com.OrderTrack.Order.application.order.dto.ChangeOrderStatus;
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;

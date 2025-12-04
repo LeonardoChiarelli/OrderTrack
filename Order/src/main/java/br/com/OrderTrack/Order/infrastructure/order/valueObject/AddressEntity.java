@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class AddressEntity {
-    public String street;
-    public String neighborhood;
-    public String postalCode;
-    public String city;
-    public String state;
-    public String number;
-    public String complement;
+    private String street;
+    private String neighborhood;
+    private String postalCode;
+    private String city;
+    private String state;
+    private String number;
+    private String complement;
 
     public AddressEntity(@NotNull @Valid AddressDTO addressDTO) {
         this.street = addressDTO.street();

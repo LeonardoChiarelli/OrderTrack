@@ -4,7 +4,7 @@ import br.com.OrderTrack.Order.application.inventory.dto.InventoryListDTO;
 import br.com.OrderTrack.Order.application.inventory.dto.UpdateInventoryDTO;
 import br.com.OrderTrack.Order.infrastructure.inventory.InventoryEntity;
 import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

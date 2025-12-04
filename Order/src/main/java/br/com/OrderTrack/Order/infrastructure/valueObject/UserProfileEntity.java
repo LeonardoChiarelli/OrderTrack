@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "users_profiles")
 @AllArgsConstructor
@@ -19,8 +21,8 @@ import lombok.NoArgsConstructor;
 public class UserProfileEntity {
 
     @Id
-    private Long userId;
+    private UUID userId;
 
     @Id
-    private Long profileId;
+    private UUID profileId;
 }

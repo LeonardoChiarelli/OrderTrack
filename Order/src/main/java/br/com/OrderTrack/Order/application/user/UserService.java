@@ -6,7 +6,7 @@ import br.com.OrderTrack.Order.infrastructure.security.TokenService;
 import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
 import br.com.OrderTrack.Order.infrastructure.profile.IProfileRepository;
 import br.com.OrderTrack.Order.infrastructure.user.IUserRepository;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

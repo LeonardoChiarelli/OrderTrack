@@ -3,7 +3,7 @@ package br.com.OrderTrack.Order.application.helper;
 import br.com.OrderTrack.Order.infrastructure.product.ProductEntity;
 import br.com.OrderTrack.Order.infrastructure.order.IOrderRepository;
 import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
-import br.com.OrderTrack.Order.application.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

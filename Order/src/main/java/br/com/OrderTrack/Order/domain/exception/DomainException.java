@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Order.application.exception;
+package br.com.OrderTrack.Order.domain.exception;
 
 public class DomainException extends RuntimeException {
     public DomainException(String message) {
