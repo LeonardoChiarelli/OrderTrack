@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Order" />
         <module name="Payment" />
-        <module name="FrontEnd" />
         <module name="Gateway" />
         <module name="CommonEvents" />
         <module name="Notification" />
@@ -20,7 +19,6 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="CommonEvents" options="-parameters" />
-      <module name="FrontEnd" options="-parameters" />
       <module name="Gateway" options="-parameters" />
       <module name="Notification" options="-parameters" />
       <module name="Order" options="-parameters" />
