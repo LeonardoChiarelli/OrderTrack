@@ -1,6 +1,5 @@
 package br.com.OrderTrack.Payment.domain.dto;
 
-import br.com.OrderTrack.Payment.domain.model.Order;
 import br.com.OrderTrack.Payment.domain.model.Payment;
 import br.com.OrderTrack.Payment.domain.model.PaymentMethod;
 import br.com.OrderTrack.Payment.domain.model.PaymentStatus;

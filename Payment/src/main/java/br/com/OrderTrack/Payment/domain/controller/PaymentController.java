@@ -23,16 +23,6 @@ public class PaymentController {
     @Autowired
     private HttpServletRequest request;
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity<PaymentDetailDTO> realizePayment(@RequestBody @Valid MakePaymentDTO dto, UriComponentsBuilder builder /* DTO QUE RECEBE AS MENSAGENS */) {
-        var payment = service.makePayment(dto);
-
-        var uri = builder.path("/{id}").buildAndExpand(payment.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new PaymentDetailDTO(payment));
-    }
-
     @GetMapping("/admin/listAll")
     public ResponseEntity<Page<PaymentDetailDTO>> listAllPayments(Pageable pageable) {
         return ResponseEntity.ok(service.listaAllPayments(pageable));

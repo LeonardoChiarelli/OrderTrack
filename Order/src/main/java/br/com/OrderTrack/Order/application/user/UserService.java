@@ -8,12 +8,17 @@ import br.com.OrderTrack.Order.infrastructure.profile.IProfileRepository;
 import br.com.OrderTrack.Order.infrastructure.user.IUserRepository;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -49,11 +54,12 @@ public class UserService implements UserDetailsService {
         var authenticationManager = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         var authentication = manager.authenticate(authenticationManager);
 
-        return tokenService.generateToken((UserEntity) authentication.getPrincipal());
+        return tokenService.generateToken((UserEntity) Objects.requireNonNull(authentication.getPrincipal()));
     }
 
+    @NotNull
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NotNull String email) throws UsernameNotFoundException {
         return repository.findByEmail(email).orElseThrow(() -> new ValidationException("UserEntity not found"));
     }
 }

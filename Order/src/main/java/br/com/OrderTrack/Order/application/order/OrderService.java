@@ -2,26 +2,22 @@ package br.com.OrderTrack.Order.application.order;
 
 import br.com.OrderTrack.Order.application.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.application.exception.InventoryException;
-import br.com.OrderTrack.Order.domain.exception.ValidationException;
-import br.com.OrderTrack.Order.application.helper.HelperMethod;
 import br.com.OrderTrack.Order.application.order.dto.ChangeOrderStatus;
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.application.order.dto.OrderDetailsDTO;
-import br.com.OrderTrack.Order.application.order.dto.OrderedItemsDTO;
+import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
 import br.com.OrderTrack.Order.infrastructure.order.IOrderRepository;
 import br.com.OrderTrack.Order.infrastructure.order.OrderEntity;
 import br.com.OrderTrack.Order.infrastructure.order.OrderItemEntity;
 import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
 import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
-import br.com.OrderTrack.Order.infrastructure.product.ProductEntity;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +34,26 @@ public class OrderService {
     private IProductRepository productRepository;
 
     public OrderEntity createOrder(@Valid CreateOrderDTO dto) {
+        List<OrderItemEntity> orderItems = new ArrayList<>();
 
-        var address = new AddressEntity(dto.shippingAddress());
-        var orderedItems = getItems(dto.items());
+        dto.items().stream()
+                .map(i -> {
+                    i.productsName().forEach(productName -> {
+                       var product = productRepository.findByName(productName).orElseThrow(() -> new EntityNotFoundException("Product Not Found"));
 
-        return new OrderEntity(dto, address, orderedItems);
+                       var inventory = inventoryRepository.findByProductName(product.getName()).orElseThrow(() -> new EntityNotFoundException("Inventory not found"));
+
+                       if (inventory.getQuantity() < i.quantity()) {
+                           throw new InventoryException(String.format("Product '%s' is out of stock.", inventory.getProductEntity().getName()));
+                       }
+
+                       var orderItem = new OrderItemEntity(i, product);
+                        orderItems.add(orderItem);
+                    });
+                    return null;
+                });
+
+        return new OrderEntity(dto, new AddressEntity(dto.shippingAddress()), orderItems);
     }
 
     public OrderEntity changeStatus(@Valid ChangeOrderStatus dto) {
@@ -57,48 +68,6 @@ public class OrderService {
 
     public OrderEntity getOrder(Long id) {
         return repository.findById(id).orElseThrow(() -> new ValidationException("OrderEntity not found"));
-    }
-
-    public List<OrderItemEntity> getItems(List<OrderedItemsDTO> itemsDTO) {
-        var productList = new ArrayList<ProductEntity>();
-        var orderItemEntityList = new ArrayList<OrderItemEntity>();
-
-        itemsDTO.stream().map(item ->
-                item.productsName().stream().map(productName -> {
-                    var inventory = inventoryRepository.findByProductName(productName).orElseThrow(() -> new ValidationException("ProductEntity not found"));
-                    var product = HelperMethod.loadProductsByName(productName);
-                    productList.add(product);
-
-                    if (inventory.getQuantity() <= item.quantity() && !product.isActive()) {
-                        throw new ValidationException("ProductEntity was not active or out of stock");
-                    }
-                    inventory.decreaseQuantity(item.quantity());
-
-                    var orderItemEntity = new OrderItemEntity(item, productList);
-                    orderItemEntityList.add(orderItemEntity);
-                    return orderItemEntity;
-                }));
-        return orderItemEntityList;
-    }
-
-    public BigDecimal getTotalPrice(List<OrderedItemsDTO> itemsDTO) {
-        return (BigDecimal) itemsDTO.stream()
-                .map(item -> {
-                    var product = productRepository
-                            .findByName(item.productName())
-                            .orElseThrow(() -> new EntityNotFoundException("Product not found."));
-
-                    var inventory = inventoryRepository
-                            .findByProductName(product.getName())
-                            .orElseThrow(() -> new EntityNotFoundException("Product not found."))
-                            .getQuantity();
-
-                    if (inventory <= 0) {
-                        throw new InventoryException("The product is out of stock.");
-                    }
-
-                    return product.getPrice().multiply(BigDecimal.valueOf(item.quantity()));
-                });
     }
 }
 
