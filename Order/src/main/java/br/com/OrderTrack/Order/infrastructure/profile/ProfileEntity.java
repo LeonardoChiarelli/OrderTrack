@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.infrastructure.profile;
 
+import br.com.OrderTrack.Order.domain.profile.Profile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,11 @@ public class ProfileEntity implements GrantedAuthority {
     private UUID id;
 
     private String name;
+
+    public ProfileEntity(Profile profile) {
+        this.id = profile.getId();
+        this.name = profile.getName();
+    }
 
     public boolean isAdmin() { return this.name.equals("ROLE_ADMIN"); }
     public boolean isConsumer() { return this.name.equals("ROLE_CONSUMER"); }

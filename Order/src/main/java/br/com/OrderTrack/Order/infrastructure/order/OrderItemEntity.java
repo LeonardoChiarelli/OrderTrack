@@ -1,6 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.order;
 
 import br.com.OrderTrack.Order.application.order.dto.OrderedItemsDTO;
+import br.com.OrderTrack.Order.domain.order.OrderItem;
 import br.com.OrderTrack.Order.infrastructure.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @EqualsAndHashCode(of = "id")
+@ToString
 public class OrderItemEntity {
 
     @Id
@@ -36,6 +38,15 @@ public class OrderItemEntity {
         this.productEntity = productEntity;
         this.quantity = item.quantity();
         this.unitPriceAtPurchase = productEntity.getPrice();
+    }
+
+    public OrderItemEntity(OrderItem orderItem, ProductEntity productEntity, OrderEntity orderEntity) {
+        this.id = orderItem.getId();
+        this.productEntity = productEntity;
+        this.quantity = orderItem.getQuantity();
+        this.unitPriceAtPurchase = orderItem.getUnitPriceAtPurchase();
+        this.orderEntity = orderEntity;
+
     }
 
     public BigDecimal calculateTotal() {

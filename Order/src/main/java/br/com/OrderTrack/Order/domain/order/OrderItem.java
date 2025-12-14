@@ -5,6 +5,7 @@ import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import br.com.OrderTrack.Order.domain.product.Product;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 
 public class OrderItem {
@@ -56,6 +57,18 @@ public class OrderItem {
 
     public BigDecimal getUnitPriceAtPurchase() {
         return unitPriceAtPurchase;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return Objects.equals(getId(), orderItem.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 
     @Override

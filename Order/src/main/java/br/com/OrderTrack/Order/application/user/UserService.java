@@ -2,7 +2,7 @@ package br.com.OrderTrack.Order.application.user;
 
 import br.com.OrderTrack.Order.application.user.dto.SignInDTO;
 import br.com.OrderTrack.Order.application.user.dto.SignUpDTO;
-import br.com.OrderTrack.Order.infrastructure.security.TokenService;
+import br.com.OrderTrack.Order.infrastructure.configuration.security.TokenService;
 import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
 import br.com.OrderTrack.Order.infrastructure.profile.IProfileRepository;
 import br.com.OrderTrack.Order.infrastructure.user.IUserRepository;

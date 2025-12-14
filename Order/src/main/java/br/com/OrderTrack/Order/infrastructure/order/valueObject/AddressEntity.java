@@ -1,6 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.order.valueObject;
 
 import br.com.OrderTrack.Order.application.order.dto.AddressDTO;
+import br.com.OrderTrack.Order.domain.order.valueObject.Address;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -29,5 +30,15 @@ public class AddressEntity {
         this.state = addressDTO.state();
         this.number = addressDTO.number();
         this.complement = addressDTO.complement();
+    }
+
+    public AddressEntity(Address shippingAddress) {
+        this.street = shippingAddress.getStreet();
+        this.neighborhood = shippingAddress.getNeighborhood();
+        this.postalCode = shippingAddress.getPostalCode();
+        this.city = shippingAddress.getCity();
+        this.state = shippingAddress.getState();
+        this.number = shippingAddress.getNumber();
+        this.complement = shippingAddress.getComplement();
     }
 }

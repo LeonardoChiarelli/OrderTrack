@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Order {
@@ -85,6 +86,18 @@ public class Order {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(getId(), order.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
@@ -116,14 +129,16 @@ public class Order {
             return this;
         }
 
-        public OrderBuilder shippingAddress(String street,
-                                            String neighborhood,
-                                            String postalCode,
-                                            String city,
-                                            String state,
-                                            String number,
-                                            String complement) {
-            this.shippingAddress = null;// Builder;
+        public OrderBuilder shippingAddress(Address address) {
+            this.shippingAddress = Address.builder()
+                    .street(address.getStreet())
+                    .neighborhood(address.getNeighborhood())
+                    .postalCode(address.getPostalCode())
+                    .city(address.getCity())
+                    .state(address.getState())
+                    .number(address.getNumber())
+                    .complement(address.getComplement())
+                .build();
             return this;
         }
 
@@ -143,7 +158,7 @@ public class Order {
                     this.consumerName,
                     this.consumerEmail,
                     this.shippingAddress,
-                    items
+                    this.items
             );
         }
     }

@@ -23,4 +23,5 @@
 hs_err_pid*
 replay_pid*
 
-.config
+.config # Remove
+.github # Remove

@@ -40,10 +40,9 @@ public class OrderService {
     public OrderEntity createOrder(@Valid CreateOrderDTO dto) {
 
         var address = new AddressEntity(dto.shippingAddress());
-        var totalPrice = getTotalPrice(dto.items());
         var orderedItems = getItems(dto.items());
 
-        return new OrderEntity(dto, address, totalPrice, orderedItems);
+        return new OrderEntity(dto, address, orderedItems);
     }
 
     public OrderEntity changeStatus(@Valid ChangeOrderStatus dto) {

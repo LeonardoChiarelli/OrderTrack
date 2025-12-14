@@ -4,6 +4,7 @@ import br.com.OrderTrack.Order.domain.exception.DomainException;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Product {
@@ -62,6 +63,18 @@ public class Product {
 
     public boolean isActive() {
         return active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(getId(), product.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 
     @Override

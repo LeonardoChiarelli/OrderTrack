@@ -1,14 +1,13 @@
 package br.com.OrderTrack.Order.infrastructure.order;
 
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
+import br.com.OrderTrack.Order.domain.order.Order;
+import br.com.OrderTrack.Order.domain.order.OrderStatus;
 import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "id")
+@ToString
 public class OrderEntity {
 
     @Id
@@ -59,6 +59,16 @@ public class OrderEntity {
         this.status = OrderStatus.NEW;
         this.items = items;
         items.forEach(i -> i.setOrder(this));
+    }
+
+    public OrderEntity(Order order, AddressEntity addressEntity) {
+        this.id = order.getId();
+        this.consumerName = order.getConsumerName();
+        this.consumerEmail = order.getConsumerEmail();
+        this.shippingAddressEntity = addressEntity;
+        this.orderDate = order.getOrderDate();
+        this.totalPrice = order.getTotalPrice();
+        this.status = order.getStatus();
     }
 
     public void changeStatus(@NotNull OrderStatus status) {

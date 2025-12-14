@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Order.infrastructure.springDoc;
+package br.com.OrderTrack.Order.infrastructure.configuration.springDoc;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

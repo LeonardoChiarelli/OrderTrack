@@ -1,12 +1,10 @@
 package br.com.OrderTrack.Order.infrastructure.product;
 
 import br.com.OrderTrack.Order.application.product.dto.CreateProductDTO;
+import br.com.OrderTrack.Order.domain.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -17,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "id")
+@ToString
 public class ProductEntity {
 
     @Id
@@ -35,6 +34,15 @@ public class ProductEntity {
         this.category = dto.category();
         this.price = dto.price();
         this.active = true;
+    }
+
+    public ProductEntity(Product product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.description = product.getDescription();
+        this.category = product.getCategory();
+        this.price = product.getPrice();
+        this.active = product.isActive();
     }
 
     public void changeStatus(boolean status) {

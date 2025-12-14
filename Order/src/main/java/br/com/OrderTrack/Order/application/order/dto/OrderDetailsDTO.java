@@ -3,7 +3,6 @@ package br.com.OrderTrack.Order.application.order.dto;
 import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
 import br.com.OrderTrack.Order.infrastructure.order.OrderEntity;
 import br.com.OrderTrack.Order.infrastructure.order.OrderItemEntity;
-import br.com.OrderTrack.Order.infrastructure.order.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Order.infrastructure.security;
+package br.com.OrderTrack.Order.infrastructure.configuration.security;
 
 import br.com.OrderTrack.Order.infrastructure.user.IUserRepository;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;

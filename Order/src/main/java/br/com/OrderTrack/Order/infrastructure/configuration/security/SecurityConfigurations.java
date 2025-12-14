@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Order.infrastructure.security;
+package br.com.OrderTrack.Order.infrastructure.configuration.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

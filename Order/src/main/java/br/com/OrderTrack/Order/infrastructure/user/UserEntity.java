@@ -1,6 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.user;
 
 import br.com.OrderTrack.Order.application.user.dto.SignUpDTO;
+import br.com.OrderTrack.Order.domain.user.User;
 import br.com.OrderTrack.Order.infrastructure.profile.ProfileEntity;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -41,6 +42,14 @@ public class UserEntity implements UserDetails {
         this.email = dto.email();
         this.password = password;
         this.profileEntities = List.of(profileEntity);
+    }
+
+    public UserEntity(User user, List<ProfileEntity> profiles) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.profileEntities = profiles;
     }
 
     public Boolean isAdmin() { return this.profileEntities.stream().anyMatch(ProfileEntity::isAdmin); }

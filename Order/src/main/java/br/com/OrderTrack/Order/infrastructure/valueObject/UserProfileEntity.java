@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.infrastructure.valueObject;
 
+import br.com.OrderTrack.Order.domain.valueObject.UserProfile;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -25,4 +26,9 @@ public class UserProfileEntity {
 
     @Id
     private UUID profileId;
+
+    public UserProfileEntity(UserProfile userProfile) {
+        this.userId = userProfile.getUserId();
+        this.profileId = userProfile.getProfileId();
+    }
 }
