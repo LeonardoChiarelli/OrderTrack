@@ -21,18 +21,17 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     private TokenService tokenService;
 
-    @Autowired
-    private IUserRepository userRepository;
-
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         var tokenJWT = recoverToken(request);
 
         if (tokenJWT != null) {
-            var subject = tokenService.getSubject(tokenJWT);
-            var user = userRepository.findByEmail(subject).orElseThrow(() -> new ValidationException("UserEntity not found"));
+            var decodedJWT = tokenService.validateAndDecode(tokenJWT);
+            var userEmail = decodedJWT.getSubject();
+            var roles = decodedJWT.getClaim("roles").asList(String.class);
+            var authorities = roles.stream().map(SimpleGrantedAuthority::new).toList();
 
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            var authentication = new UsernamePasswordAuthenticationToken(userEmail, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 

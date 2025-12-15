@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.Optional;
 
-public interface IProductRepository extends JpaRepository<ProductEntity, Long> {
+public interface JpaProductRepository extends JpaRepository<ProductEntity, Long> {
     Boolean existsByName(@NotBlank String nome);
 
     Page<ProductEntity> findAllByActiveTrue(Pageable pageable);

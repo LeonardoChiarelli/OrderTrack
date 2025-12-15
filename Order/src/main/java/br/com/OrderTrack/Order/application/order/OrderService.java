@@ -8,13 +8,13 @@ import br.com.OrderTrack.Order.application.order.dto.OrderDetailsDTO;
 import br.com.OrderTrack.Order.application.order.port.out.OrderEventPublisherPort;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import br.com.OrderTrack.Order.domain.order.event.PaymentRequestedEvent;
-import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
+import br.com.OrderTrack.Order.infrastructure.inventory.JpaInventoryRepository;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.repository.JPAOrderRepository;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderEntity;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderItemEntity;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.mapper.OrderEntityMapper;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject.AddressEntity;
-import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
+import br.com.OrderTrack.Order.infrastructure.product.JpaProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,10 +31,10 @@ public class OrderService {
     private JPAOrderRepository repository;
 
     @Autowired
-    private IInventoryRepository inventoryRepository;
+    private JpaInventoryRepository inventoryRepository;
 
     @Autowired
-    private IProductRepository productRepository;
+    private JpaProductRepository productRepository;
 
     @Autowired
     private OrderEventPublisherPort orderEventPublisherPort;

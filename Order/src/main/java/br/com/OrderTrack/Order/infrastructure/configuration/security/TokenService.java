@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.infrastructure.configuration.security;
 
+import br.com.OrderTrack.Order.infrastructure.profile.ProfileEntity;
 import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import com.auth0.jwt.JWT;
@@ -29,6 +30,8 @@ public class TokenService {
                     .withIssuer(ISSUE)
                     .withSubject(userEntity.getEmail())
                     .withClaim("name", userEntity.getName())
+                    .withClaim("id", userEntity.getId().toString())
+                    .withClaim("roles", userEntity.getProfileEntities().stream().map(ProfileEntity::getName).toList())
                     .withExpiresAt(dateOfExpiration())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
@@ -51,5 +54,8 @@ public class TokenService {
 
     private Instant dateOfExpiration() {
         return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public String validateAndDecode(String tokenJWT) {
     }
 }

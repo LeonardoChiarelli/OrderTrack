@@ -3,7 +3,7 @@ package br.com.OrderTrack.Order.application.report;
 import br.com.OrderTrack.Order.application.inventory.mapper.InventoryBillingMapperRecord;
 import br.com.OrderTrack.Order.application.inventory.mapper.InventoryReportMapperRecord;
 import br.com.OrderTrack.Order.application.product.mapper.ProductMapperRecord;
-import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
+import br.com.OrderTrack.Order.infrastructure.inventory.JpaInventoryRepository;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.repository.JPAOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class ReportService {
 
     @Autowired
-    private IInventoryRepository inventoryRepository;
+    private JpaInventoryRepository inventoryRepository;
 
     @Autowired
     private JPAOrderRepository orderRepository;

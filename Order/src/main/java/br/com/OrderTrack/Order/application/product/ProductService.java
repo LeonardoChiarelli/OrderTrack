@@ -4,8 +4,8 @@ import br.com.OrderTrack.Order.application.product.dto.CreateProductDTO;
 import br.com.OrderTrack.Order.application.product.dto.ListOfProductsDTO;
 import br.com.OrderTrack.Order.infrastructure.inventory.InventoryEntity;
 import br.com.OrderTrack.Order.infrastructure.product.ProductEntity;
-import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
-import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
+import br.com.OrderTrack.Order.infrastructure.inventory.JpaInventoryRepository;
+import br.com.OrderTrack.Order.infrastructure.product.JpaProductRepository;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     @Autowired
-    private IProductRepository repository;
+    private JpaProductRepository repository;
 
     @Autowired
-    private IInventoryRepository inventoryRepository;
+    private JpaInventoryRepository inventoryRepository;
 
     public ProductEntity createProduct(@Valid CreateProductDTO dto) {
         var existingProduct = repository.existsByName(dto.name());

@@ -3,7 +3,7 @@ package br.com.OrderTrack.Order.application.inventory;
 import br.com.OrderTrack.Order.application.inventory.dto.InventoryListDTO;
 import br.com.OrderTrack.Order.application.inventory.dto.UpdateInventoryDTO;
 import br.com.OrderTrack.Order.infrastructure.inventory.InventoryEntity;
-import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
+import br.com.OrderTrack.Order.infrastructure.inventory.JpaInventoryRepository;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class InventoryService {
 
     @Autowired
-    private IInventoryRepository repository;
+    private JpaInventoryRepository repository;
 
     public Page<InventoryListDTO> getList(Pageable pageable) {
         return repository.findAll(pageable).map(InventoryListDTO::new);
