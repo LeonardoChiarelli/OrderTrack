@@ -19,10 +19,6 @@ public class InventoryController {
     @Autowired
     private InventoryService service;
 
-    @Autowired
-    private HttpServletRequest request;
-
-
     @GetMapping
     public ResponseEntity<Page<InventoryListDTO>> listOfProductsInInventory(@PageableDefault(sort = {"quantity"}) Pageable pageable){
         return ResponseEntity.ok().body(service.getList(pageable));
@@ -31,14 +27,14 @@ public class InventoryController {
     @PatchMapping("/add")
     @Transactional
     public ResponseEntity<Void> addQuantity(@RequestBody @Valid UpdateInventoryDTO dto){
-        service.updateQuantity(dto, request.getRequestURL().toString());
+        service.addStock(dto.productIdOrNumber(), dto.quantity());
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/decrease")
     @Transactional
     public ResponseEntity<Void> removeQuantity(@RequestBody @Valid UpdateInventoryDTO dto){
-        service.updateQuantity(dto, request.getRequestURL().toString());
+        service.decreaseStock(dto.productIdOrNumber(), dto.quantity());
         return ResponseEntity.ok().build();
     }
 }

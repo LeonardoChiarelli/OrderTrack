@@ -1,6 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.order.persistence.entity;
 
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
+import br.com.OrderTrack.Order.domain.exception.InvalidOrderStateException;
 import br.com.OrderTrack.Order.domain.order.Order;
 import br.com.OrderTrack.Order.domain.order.OrderStatus;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject.AddressEntity;
@@ -71,7 +72,38 @@ public class OrderEntity {
         this.status = order.getStatus();
     }
 
-    public void changeStatus(@NotNull OrderStatus status) {
-        this.status = status;
+    public void markAsProcessing() {
+        if (status != OrderStatus.NEW) {
+            throw new InvalidOrderStateException("Order must be new.");
+        }
+        this.status = OrderStatus.PROCESSING;
+    }
+
+    public void markAsPackage() {
+        if (status != OrderStatus.PROCESSING) {
+            throw new InvalidOrderStateException("Order status be processing.");
+        }
+        this.status = OrderStatus.PACKAGE;
+    }
+
+    public void markAsOutForDelivery() {
+        if (status != OrderStatus.PACKAGE) {
+            throw new InvalidOrderStateException("Order must be package.");
+        }
+        this.status = OrderStatus.OUT_FOR_DELIVERY;
+    }
+
+    public void markAsDelivered() {
+        if (status != OrderStatus.OUT_FOR_DELIVERY) {
+            throw new InvalidOrderStateException("Order must be out for delivery.");
+        }
+        this.status = OrderStatus.DELIVERED;
+    }
+
+    public void markAsCanceled() {
+        if (status != OrderStatus.PROCESSING) {
+            throw new InvalidOrderStateException("Order must be processing.");
+        }
+        this.status = OrderStatus.CANCELED;
     }
 }

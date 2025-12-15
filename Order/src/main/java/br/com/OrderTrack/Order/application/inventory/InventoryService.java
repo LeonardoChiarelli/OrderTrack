@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InventoryService {
@@ -21,22 +22,34 @@ public class InventoryService {
         return repository.findAll(pageable).map(InventoryListDTO::new);
     }
 
-    public void updateQuantity(@Valid UpdateInventoryDTO dto, String requestURL) {
-        try {
-            var id = Long.parseLong(dto.productIdOrNumber());
-            var inventory = repository.findById(id).orElseThrow(() -> new ValidationException("ProductEntity not found"));
-
-            doValidationsAndAddOrDecrease(inventory, requestURL, dto.quantity());
-        } catch (NumberFormatException e) {
-            var inventory = repository.findByProductName(dto.productIdOrNumber()).orElseThrow(() -> new ValidationException("ProductEntity not found"));
-
-            doValidationsAndAddOrDecrease(inventory, requestURL, dto.quantity());
+    @Transactional
+    public void addStock(String productIdOrNumber, Integer quantity) {
+        var inventory = findInventory(productIdOrNumber);
+        if (!inventory.getProductEntity().isActive()) {
+            throw new ValidationException("ProductEntity is not active");
         }
+        inventory.addQuantity(quantity);
+        repository.save(inventory);
     }
 
-    public void doValidationsAndAddOrDecrease(InventoryEntity inventoryEntity, String requestURL, Integer quantity) {
-        if (!inventoryEntity.getProductEntity().isActive()) { throw new ValidationException("ProductEntity is not active"); }
-        if (requestURL.equals("http://localhost:8080/orderTrack/admin/inventory/add")) { inventoryEntity.addQuantity(quantity); }
-        if (requestURL.equals("http://localhost:8080/orderTrack/inventory/decrease")) { inventoryEntity.decreaseQuantity(quantity); }
+    @Transactional
+    public void decreaseStock(String productIdOrNumber, Integer quantity) {
+        var inventory = findInventory(productIdOrNumber);
+        if (!inventory.getProductEntity().isActive()) {
+            throw new ValidationException("ProductEntity is not active");
+        }
+        inventory.decreaseQuantity(quantity);
+        repository.save(inventory);
+    }
+
+    private InventoryEntity findInventory(String productIdOrNumber) {
+        try {
+            var id = Long.parseLong(productIdOrNumber);
+            return repository.findById(id)
+                    .orElseThrow(() -> new ValidationException("Inventory not found for ID: " + id));
+        } catch (NumberFormatException e) {
+            return repository.findByProductName(productIdOrNumber)
+                    .orElseThrow(() -> new ValidationException("Inventory not found for Product: " + productIdOrNumber));
+        }
     }
 }
