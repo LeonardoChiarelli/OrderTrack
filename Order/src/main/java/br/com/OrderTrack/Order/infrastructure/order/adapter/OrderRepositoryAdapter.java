@@ -1,9 +1,10 @@
 package br.com.OrderTrack.Order.infrastructure.order.adapter;
 
-import br.com.OrderTrack.Order.application.order.port.out.OrderRepositoryPort;
+import br.com.OrderTrack.Order.application.port.out.OrderGateway;
 import br.com.OrderTrack.Order.domain.order.Order;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.mapper.OrderEntityMapper;
 import br.com.OrderTrack.Order.infrastructure.order.persistence.repository.JPAOrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +12,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class OrderRepositoryAdapter implements OrderRepositoryPort {
+@RequiredArgsConstructor
+public class OrderRepositoryAdapter implements OrderGateway {
 
-    @Autowired
-    private JPAOrderRepository jpaRepository;
-
-    @Autowired
-    private OrderEntityMapper mapper;
+    private final JPAOrderRepository jpaRepository;
+    private final OrderEntityMapper mapper;
 
     @Override
     public Order save(Order order) {

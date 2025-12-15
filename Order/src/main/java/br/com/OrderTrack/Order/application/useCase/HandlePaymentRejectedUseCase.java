@@ -2,7 +2,7 @@ package br.com.OrderTrack.Order.application.useCase;
 
 import br.com.OrderTrack.Order.application.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.application.inventory.InventoryService;
-import br.com.OrderTrack.Order.application.order.port.out.OrderRepositoryPort;
+import br.com.OrderTrack.Order.application.port.out.OrderGateway;
 import br.com.OrderTrack.Order.domain.order.Order;
 import br.com.OrderTrack.Order.domain.order.OrderStatus;
 import org.springframework.stereotype.Service;
@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @Service
 public class HandlePaymentRejectedUseCase {
-    private final OrderRepositoryPort repository;
+    private final OrderGateway repository;
     private final InventoryService inventoryService;
 
-    public HandlePaymentRejectedUseCase(OrderRepositoryPort repository, InventoryService inventoryService) {
+    public HandlePaymentRejectedUseCase(OrderGateway repository, InventoryService inventoryService) {
         this.repository = repository;
         this.inventoryService = inventoryService;
     }

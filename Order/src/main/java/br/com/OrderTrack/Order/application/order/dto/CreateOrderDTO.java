@@ -9,14 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public record CreateOrderDTO(
-        UUID id,
-
-        @NotBlank
-        String consumerName,
-
-        @NotBlank
-        @Email
-        String consumerEmail,
 
         @NotNull
         @Valid

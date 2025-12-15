@@ -15,10 +15,19 @@ public class RabbitConfig {
     public static final String PAYMENT_REJECTED_QUEUE = "payment.rejected.order.queue";
     public static final String ORDER_EXCHANGE = "order-exchange";
     public static final String PAYMENT_EXCHANGE = "payment-exchange";
+    public static final String PAYMENT_APPROVED_DLQ = "payment.approved.dlq";
+
+    @Bean
+    public Queue paymentApprovedDlq() {
+        return QueueBuilder.durable(PAYMENT_APPROVED_DLQ).build();
+    }
 
     @Bean
     public Queue paymentApprovedQueue() {
-        return QueueBuilder.durable(PAYMENT_APPROVED_QUEUE).build();
+        return QueueBuilder.durable(PAYMENT_APPROVED_QUEUE)
+                .withArgument("x-dead-letter-exchange", "") // Default exchange
+                .withArgument("x-dead-letter-routing-key", PAYMENT_APPROVED_DLQ)
+                .build();
     }
 
     @Bean
