@@ -1,12 +1,11 @@
-package br.com.OrderTrack.Order.application.order;
+package br.com.OrderTrack.Order.infrastructure.order;
 
+import br.com.OrderTrack.Order.application.order.OrderService;
 import br.com.OrderTrack.Order.application.order.dto.ChangeOrderStatus;
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.application.order.dto.OrderDetailsDTO;
-import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

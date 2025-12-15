@@ -5,11 +5,14 @@ import br.com.OrderTrack.Order.application.exception.InventoryException;
 import br.com.OrderTrack.Order.application.order.dto.ChangeOrderStatus;
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.application.order.dto.OrderDetailsDTO;
+import br.com.OrderTrack.Order.application.port.out.EventPublisher;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.order.event.PaymentRequestedEvent;
 import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
-import br.com.OrderTrack.Order.infrastructure.order.IOrderRepository;
+import br.com.OrderTrack.Order.infrastructure.order.JPAOrderRepository;
 import br.com.OrderTrack.Order.infrastructure.order.OrderEntity;
 import br.com.OrderTrack.Order.infrastructure.order.OrderItemEntity;
+import br.com.OrderTrack.Order.infrastructure.order.gateways.OrderEntityMapper;
 import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
 import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
 import jakarta.validation.Valid;
@@ -25,13 +28,19 @@ import java.util.List;
 public class OrderService {
 
     @Autowired
-    private IOrderRepository repository;
+    private JPAOrderRepository repository;
 
     @Autowired
     private IInventoryRepository inventoryRepository;
 
     @Autowired
     private IProductRepository productRepository;
+
+    @Autowired
+    private EventPublisher eventPublisher;
+
+    @Autowired
+    private OrderEntityMapper mapper;
 
     public OrderEntity createOrder(@Valid CreateOrderDTO dto) {
         List<OrderItemEntity> orderItems = new ArrayList<>();
@@ -53,7 +62,18 @@ public class OrderService {
                     return null;
                 });
 
-        return new OrderEntity(dto, new AddressEntity(dto.shippingAddress()), orderItems);
+        var orderEntity = new OrderEntity(dto, new AddressEntity(dto.shippingAddress()), orderItems);
+        var orderDomain = mapper.toDomain(orderEntity);
+
+        var event = PaymentRequestedEvent.builder()
+                .orderId(orderDomain.getId())
+                .totalPrice(orderDomain.getTotalPrice())
+                .currency("BRL")
+            .build();
+
+        eventPublisher.publish(event);
+
+        return orderEntity;
     }
 
     public OrderEntity changeStatus(@Valid ChangeOrderStatus dto) {

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IOrderRepository extends JpaRepository<OrderEntity, Long> {
+public interface JPAOrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query("""
             SELECT SUM(i.unitPrice * i.quantity)

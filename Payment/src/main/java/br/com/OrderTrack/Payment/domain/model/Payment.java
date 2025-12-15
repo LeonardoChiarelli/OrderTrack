@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
@@ -34,9 +35,7 @@ public class Payment {
 
     private LocalDateTime paymentDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    private UUID orderID;
 
     @ManyToOne
     @JoinColumn(name = "payment_method_id")

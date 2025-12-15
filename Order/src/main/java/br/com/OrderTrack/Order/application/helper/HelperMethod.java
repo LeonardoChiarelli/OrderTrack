@@ -1,7 +1,7 @@
 package br.com.OrderTrack.Order.application.helper;
 
 import br.com.OrderTrack.Order.infrastructure.product.ProductEntity;
-import br.com.OrderTrack.Order.infrastructure.order.IOrderRepository;
+import br.com.OrderTrack.Order.infrastructure.order.JPAOrderRepository;
 import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import jakarta.annotation.PostConstruct;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 public class HelperMethod {
 
     @Autowired
-    private IOrderRepository orderRepository;
+    private JPAOrderRepository orderRepository;
 
     @Autowired
     private IProductRepository productRepository;
 
-    public static IOrderRepository orderRepo;
+    public static JPAOrderRepository orderRepo;
     public static IProductRepository productRepo;
 
     public static ProductEntity loadProductsByName(String productName){
