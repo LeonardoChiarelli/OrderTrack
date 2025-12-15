@@ -1,9 +1,9 @@
-package br.com.OrderTrack.Order.infrastructure.order;
+package br.com.OrderTrack.Order.infrastructure.order.persistence.entity;
 
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.domain.order.Order;
 import br.com.OrderTrack.Order.domain.order.OrderStatus;
-import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject.AddressEntity;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

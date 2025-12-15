@@ -5,15 +5,15 @@ import br.com.OrderTrack.Order.application.exception.InventoryException;
 import br.com.OrderTrack.Order.application.order.dto.ChangeOrderStatus;
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.application.order.dto.OrderDetailsDTO;
-import br.com.OrderTrack.Order.application.port.out.EventPublisher;
+import br.com.OrderTrack.Order.application.order.port.out.OrderEventPublisherPort;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
 import br.com.OrderTrack.Order.domain.order.event.PaymentRequestedEvent;
 import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
-import br.com.OrderTrack.Order.infrastructure.order.JPAOrderRepository;
-import br.com.OrderTrack.Order.infrastructure.order.OrderEntity;
-import br.com.OrderTrack.Order.infrastructure.order.OrderItemEntity;
-import br.com.OrderTrack.Order.infrastructure.order.gateways.OrderEntityMapper;
-import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.repository.JPAOrderRepository;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderItemEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.mapper.OrderEntityMapper;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject.AddressEntity;
 import br.com.OrderTrack.Order.infrastructure.product.IProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class OrderService {
     private IProductRepository productRepository;
 
     @Autowired
-    private EventPublisher eventPublisher;
+    private OrderEventPublisherPort orderEventPublisherPort;
 
     @Autowired
     private OrderEntityMapper mapper;
@@ -71,7 +71,7 @@ public class OrderService {
                 .currency("BRL")
             .build();
 
-        eventPublisher.publish(event);
+        orderEventPublisherPort.publish(event);
 
         return orderEntity;
     }

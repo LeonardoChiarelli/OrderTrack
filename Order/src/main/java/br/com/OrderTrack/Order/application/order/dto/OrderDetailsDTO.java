@@ -1,8 +1,8 @@
 package br.com.OrderTrack.Order.application.order.dto;
 
-import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
-import br.com.OrderTrack.Order.infrastructure.order.OrderEntity;
-import br.com.OrderTrack.Order.infrastructure.order.OrderItemEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject.AddressEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderItemEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

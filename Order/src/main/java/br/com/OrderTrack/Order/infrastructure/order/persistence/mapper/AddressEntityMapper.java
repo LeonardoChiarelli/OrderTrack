@@ -1,7 +1,7 @@
-package br.com.OrderTrack.Order.infrastructure.order.gateways;
+package br.com.OrderTrack.Order.infrastructure.order.persistence.mapper;
 
 import br.com.OrderTrack.Order.domain.order.valueObject.Address;
-import br.com.OrderTrack.Order.infrastructure.order.valueObject.AddressEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject.AddressEntity;
 import org.springframework.stereotype.Component;
 
 @Component

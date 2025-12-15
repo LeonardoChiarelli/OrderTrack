@@ -1,7 +1,7 @@
-package br.com.OrderTrack.Order.infrastructure.order.gateways;
+package br.com.OrderTrack.Order.infrastructure.order.persistence.mapper;
 
 import br.com.OrderTrack.Order.domain.order.OrderItem;
-import br.com.OrderTrack.Order.infrastructure.order.OrderItemEntity;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderItemEntity;
 import br.com.OrderTrack.Order.infrastructure.product.gateways.ProductEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Order.infrastructure.order;
+package br.com.OrderTrack.Order.infrastructure.order.persistence.entity;
 
 import br.com.OrderTrack.Order.application.order.dto.OrderedItemsDTO;
 import br.com.OrderTrack.Order.domain.order.OrderItem;

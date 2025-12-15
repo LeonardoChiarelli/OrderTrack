@@ -4,7 +4,7 @@ import br.com.OrderTrack.Order.application.inventory.mapper.InventoryBillingMapp
 import br.com.OrderTrack.Order.application.inventory.mapper.InventoryReportMapperRecord;
 import br.com.OrderTrack.Order.application.product.mapper.ProductMapperRecord;
 import br.com.OrderTrack.Order.infrastructure.inventory.IInventoryRepository;
-import br.com.OrderTrack.Order.infrastructure.order.JPAOrderRepository;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.repository.JPAOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;

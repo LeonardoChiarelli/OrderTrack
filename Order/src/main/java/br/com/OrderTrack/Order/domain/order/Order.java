@@ -1,7 +1,9 @@
 package br.com.OrderTrack.Order.domain.order;
 
 import br.com.OrderTrack.Order.domain.exception.DomainException;
+import br.com.OrderTrack.Order.domain.exception.InvalidOrderStateException;
 import br.com.OrderTrack.Order.domain.exception.ValidationException;
+import br.com.OrderTrack.Order.domain.order.event.OrderCreatedEvent;
 import br.com.OrderTrack.Order.domain.order.valueObject.Address;
 
 import java.math.BigDecimal;
@@ -50,7 +52,40 @@ public class Order {
         return new OrderBuilder();
     }
 
-    public void changeStatus(OrderStatus status) { this.status = status; }
+    public void markAsProcessing() {
+        if (status != OrderStatus.NEW) {
+            throw new InvalidOrderStateException("Order must be new.");
+        }
+        this.status = OrderStatus.PROCESSING;
+    }
+
+    public void markAsPackage() {
+        if (status != OrderStatus.PROCESSING) {
+            throw new InvalidOrderStateException("Order status be processing.");
+        }
+        this.status = OrderStatus.PACKAGE;
+    }
+
+    public void markAsOutForDelivery() {
+        if (status != OrderStatus.PACKAGE) {
+            throw new InvalidOrderStateException("Order must be package.");
+        }
+        this.status = OrderStatus.OUT_FOR_DELIVERY;
+    }
+
+    public void markAsDelivered() {
+        if (status != OrderStatus.OUT_FOR_DELIVERY) {
+            throw new InvalidOrderStateException("Order must be out for delivery.");
+        }
+        this.status = OrderStatus.DELIVERED;
+    }
+
+    public void markAsCanceled() {
+        if (status != OrderStatus.PROCESSING) {
+            throw new InvalidOrderStateException("Order must be processing.");
+        }
+        this.status = OrderStatus.CANCELED;
+    }
 
 
     public UUID getId() {

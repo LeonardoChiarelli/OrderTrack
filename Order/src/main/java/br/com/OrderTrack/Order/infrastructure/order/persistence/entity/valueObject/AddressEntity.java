@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Order.infrastructure.order.valueObject;
+package br.com.OrderTrack.Order.infrastructure.order.persistence.entity.valueObject;
 
 import br.com.OrderTrack.Order.application.order.dto.AddressDTO;
 import br.com.OrderTrack.Order.domain.order.valueObject.Address;

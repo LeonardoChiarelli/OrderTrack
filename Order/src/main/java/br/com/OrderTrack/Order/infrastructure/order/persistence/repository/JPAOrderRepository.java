@@ -1,6 +1,7 @@
-package br.com.OrderTrack.Order.infrastructure.order;
+package br.com.OrderTrack.Order.infrastructure.order.persistence.repository;
 
 import br.com.OrderTrack.Order.application.report.mapper.SalesStatisticsMapperRecord;
+import br.com.OrderTrack.Order.infrastructure.order.persistence.entity.OrderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
