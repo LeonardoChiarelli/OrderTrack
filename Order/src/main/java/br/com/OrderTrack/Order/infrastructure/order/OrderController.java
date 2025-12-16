@@ -1,6 +1,5 @@
 package br.com.OrderTrack.Order.infrastructure.order;
 
-import br.com.OrderTrack.Order.application.order.dto.ChangeOrderStatus;
 import br.com.OrderTrack.Order.application.order.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.application.order.dto.OrderDetailsDTO;
 import br.com.OrderTrack.Order.application.order.port.in.CreateOrderInputPort;
@@ -8,8 +7,6 @@ import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
