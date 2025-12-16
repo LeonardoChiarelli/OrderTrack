@@ -5,5 +5,5 @@ import br.com.OrderTrack.Order.application.dto.CreateOrderDTO;
 import java.util.UUID;
 
 public interface CancelOrderInputPort {
-    UUID execute(CreateOrderDTO dto, String userEmail, String userName);
+    void execute(UUID orderId);
 }

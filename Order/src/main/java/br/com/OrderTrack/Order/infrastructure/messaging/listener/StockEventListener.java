@@ -1,18 +1,14 @@
 package br.com.OrderTrack.Order.infrastructure.messaging.listener;
 
-import br.com.OrderTrack.Order.domain.event.PaymentRequestedEvent;
-import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
-import br.com.OrderTrack.Order.domain.model.Order;
-import br.com.OrderTrack.Order.domain.model.OrderStatus;
-import br.com.OrderTrack.Order.domain.port.out.OrderGateway;
-import br.com.OrderTrack.Order.infrastructure.messaging.adapter.RabbitEventPublisherAdapter;
+import br.com.OrderTrack.Order.domain.port.in.ApproveOrderStockInputPort;
+import br.com.OrderTrack.Order.domain.port.in.CancelOrderInputPort;
+import br.com.OrderTrack.Order.infrastructure.configuration.RabbitConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -21,59 +17,47 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StockEventListener {
 
-    private final OrderGateway orderGateway;
-    private final RabbitEventPublisherAdapter eventPublisher;
+    private final ApproveOrderStockInputPort approveOrderStockUseCase;
+    private final CancelOrderInputPort cancelOrderUseCase;
     private final ObjectMapper objectMapper;
 
-    @RabbitListener(queues = "stock.reserved.order.queue")
-    @Transactional
+    @RabbitListener(queues = RabbitConfig.STOCK_RESERVED_QUEUE)
     public void handleStockReserved(String payload) {
         try {
-            log.info("Estoque reservado: {}", payload);
+            log.info("Evento recebido (Estoque Reservado): {}", payload);
             JsonNode node = objectMapper.readTree(payload);
-            UUID orderId = UUID.fromString(node.get("orderId").asText());
 
-            Order order = orderGateway.findById(orderId)
-                    .orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderId));
-
-            if (order.getStatus() != OrderStatus.PENDING_STOCK) {
-                log.warn("Pedido {} em estado inválido para iniciar pagamento: {}", orderId, order.getStatus());
+            if (!node.has("orderId")) {
+                log.error("Payload inválido: orderId ausente (handleStockReserved)");
                 return;
             }
 
-            order.markAsPendingPayment();
-            orderGateway.save(order);
-
-            var paymentRequest = PaymentRequestedEvent.builder()
-                    .orderId(order.getId())
-                    .totalPrice(order.getTotalPrice())
-                    .currency("BRL")
-                    .build();
-
-            eventPublisher.publish(paymentRequest, "PaymentRequestedEvent", order.getId().toString());
+            UUID orderId = UUID.fromString(node.get("orderId").asText());
+            approveOrderStockUseCase.execute(orderId);
 
         } catch (Exception e) {
-            log.error("Erro ao processar reserva de estoque", e);
-            throw new RuntimeException(e);
+            log.error("Erro crítico ao processar reserva de estoque", e);
+            // Em produção: lançar exceção para DLQ ou retentar
         }
     }
 
-    @RabbitListener(queues = "stock.failed.order.queue")
-    @Transactional
+    @RabbitListener(queues = RabbitConfig.STOCK_FAILED_QUEUE)
     public void handleStockFailed(String payload) {
         try {
-            log.info("Falha na reserva de estoque: {}", payload);
+            log.info("Evento recebido (Falha no Estoque): {}", payload);
             JsonNode node = objectMapper.readTree(payload);
+
+            if (!node.has("orderId")) {
+                log.error("Payload inválido: orderId ausente (handleStockFailed)");
+                return;
+            }
+
             UUID orderId = UUID.fromString(node.get("orderId").asText());
 
-            Order order = orderGateway.findById(orderId).orElse(null);
-            if (order != null) {
-                order.markAsCanceled();
-                orderGateway.save(order);
-                log.info("Pedido {} cancelado por falta de estoque.", orderId);
-            }
+            cancelOrderUseCase.execute(orderId);
+
         } catch (Exception e) {
-            log.error("Erro ao processar falha de estoque", e);
+            log.error("Erro crítico ao processar falha de estoque", e);
         }
     }
 }

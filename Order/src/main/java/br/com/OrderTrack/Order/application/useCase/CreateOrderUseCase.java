@@ -2,7 +2,6 @@ package br.com.OrderTrack.Order.application.useCase;
 
 import br.com.OrderTrack.Order.application.dto.CreateOrderDTO;
 import br.com.OrderTrack.Order.domain.event.OrderCreatedEvent;
-import br.com.OrderTrack.Order.domain.event.PaymentRequestedEvent;
 import br.com.OrderTrack.Order.domain.exception.DomainException;
 import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.domain.model.Order;
@@ -28,35 +27,33 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
     private final ProductGateway productGateway;
     private final RabbitEventPublisherAdapter eventPublisher;
 
-
     @Override
     @Transactional
     public UUID execute(CreateOrderDTO dto, String userEmail, String userName) {
         var address = Address.builder()
-                        .street(dto.shippingAddress().street())
-                        .number(dto.shippingAddress().number())
-                        .neighborhood(dto.shippingAddress().neighborhood())
-                        .city(dto.shippingAddress().city())
-                        .state(dto.shippingAddress().state())
-                        .postalCode(dto.shippingAddress().postalCode())
-                        .complement(dto.shippingAddress().complement())
-                    .build();
+                .street(dto.shippingAddress().street())
+                .number(dto.shippingAddress().number())
+                .neighborhood(dto.shippingAddress().neighborhood())
+                .city(dto.shippingAddress().city())
+                .state(dto.shippingAddress().state())
+                .postalCode(dto.shippingAddress().postalCode())
+                .complement(dto.shippingAddress().complement())
+                .build();
 
         List<OrderItem> items = new ArrayList<>();
+
         dto.items().forEach(itemDto -> {
-            for (String productName : itemDto.productsName()) {
-                var product = productGateway.findByName(productName)
-                        .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + productName));
+            var product = productGateway.findByName(itemDto.productName())
+                    .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDto.productName()));
 
-                if (!product.isActive()) {
-                    throw new DomainException("Produto inativo: " + productName);
-                }
-
-                items.add(OrderItem.builder()
-                        .product(product)
-                        .quantity(itemDto.quantity())
-                        .build());
+            if (!product.isActive()) {
+                throw new DomainException("Produto inativo: " + itemDto.productName());
             }
+
+            items.add(OrderItem.builder()
+                    .product(product)
+                    .quantity(itemDto.quantity())
+                    .build());
         });
 
         var order = Order.builder()
@@ -68,7 +65,11 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
 
         var savedOrder = orderGateway.save(order);
 
-        eventPublisher.publish(new OrderCreatedEvent(savedOrder.getId()), "OrderCreatedEvent", savedOrder.getId().toString());
+        List<OrderCreatedEvent.OrderItemEventDTO> eventItems = savedOrder.getItems().stream()
+                .map(i -> new OrderCreatedEvent.OrderItemEventDTO(i.getProduct().getId(), i.getQuantity()))
+                .toList();
+
+        eventPublisher.publish(new OrderCreatedEvent(savedOrder.getId(), eventItems), "OrderCreatedEvent", savedOrder.getId().toString());
 
         return savedOrder.getId();
     }
