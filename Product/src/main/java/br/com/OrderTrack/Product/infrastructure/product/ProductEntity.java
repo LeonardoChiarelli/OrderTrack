@@ -1,7 +1,7 @@
 package br.com.OrderTrack.Product.infrastructure.product;
 
-import br.com.OrderTrack.Order.application.product.dto.CreateProductDTO;
-import br.com.OrderTrack.Order.domain.product.Product;
+import br.com.OrderTrack.Product.application.product.dto.CreateProductDTO;
+import br.com.OrderTrack.Product.domain.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;

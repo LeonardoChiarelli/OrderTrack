@@ -1,7 +1,7 @@
 package br.com.OrderTrack.Order.domain.model;
 
 import br.com.OrderTrack.Order.domain.exception.DomainException;
-import br.com.OrderTrack.Order.domain.product.Product;
+import br.com.OrderTrack.Product.domain.product.Product;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -103,7 +103,7 @@ public class OrderItem {
 
         public OrderItem build() {
             if (product == null || quantity <= 0) {
-                throw new ValidationException("All order item core must be provided.");
+                throw new DomainException("All order item core must be provided.");
             }
 
             return new OrderItem(

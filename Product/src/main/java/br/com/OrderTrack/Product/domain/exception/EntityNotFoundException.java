@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Product.domain.excpetion;
+package br.com.OrderTrack.Product.domain.exception;
 
 public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException(String message) {

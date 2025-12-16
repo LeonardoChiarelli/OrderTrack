@@ -1,6 +1,6 @@
 package br.com.OrderTrack.Product.infrastructure.product.gateways;
 
-import br.com.OrderTrack.Order.domain.product.Product;
+import br.com.OrderTrack.Product.domain.product.Product;
 import br.com.OrderTrack.Product.infrastructure.product.ProductEntity;
 import org.springframework.stereotype.Component;
 

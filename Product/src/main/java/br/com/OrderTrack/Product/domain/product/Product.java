@@ -1,6 +1,6 @@
 package br.com.OrderTrack.Product.domain.product;
 
-import br.com.OrderTrack.Order.domain.exception.DomainException;
+import br.com.OrderTrack.Product.domain.exception.DomainException;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -116,7 +116,7 @@ public class Product {
 
         public Product build() {
             if (this.name.isBlank() || this.description.isBlank() || this.category.isBlank() || this.price.compareTo(BigDecimal.ZERO) <= 0) {
-             throw new ValidationException("All product core must be provided.");
+             throw new DomainException("All product core must be provided.");
             }
 
             return new Product(name, description, category, price);
