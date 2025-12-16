@@ -7,6 +7,13 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/CommonEvents/pom.xml" />
+        <option value="$PROJECT_DIR$/Gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/Notification/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="21" project-jdk-type="JavaSDK" />
 </project>

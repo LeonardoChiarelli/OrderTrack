@@ -9,22 +9,30 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Order" />
         <module name="Payment" />
-        <module name="Gateway" />
-        <module name="CommonEvents" />
-        <module name="Notification" />
+        <module name="User" />
+        <module name="Product" />
         <module name="Track" />
+        <module name="Inventory" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="CommonEvents" target="21" />
+      <module name="Gateway" target="21" />
+      <module name="Notification" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="CommonEvents" options="-parameters" />
       <module name="Gateway" options="-parameters" />
+      <module name="Inventory" options="-parameters" />
       <module name="Notification" options="-parameters" />
       <module name="Order" options="-parameters" />
       <module name="OrderTrack" options="-parameters" />
       <module name="Payment" options="-parameters" />
+      <module name="Product" options="-parameters" />
       <module name="Track" options="-parameters" />
+      <module name="User" options="-parameters" />
     </option>
   </component>
 </project>

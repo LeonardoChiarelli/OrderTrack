@@ -1,0 +1,34 @@
+package br.com.OrderTrack.User.infrastructure.valueObject;
+
+import br.com.OrderTrack.Order.domain.valueObject.UserProfile;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "users_profiles")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode
+@IdClass(UserProfileIDEntity.class)
+public class UserProfileEntity {
+
+    @Id
+    private UUID userId;
+
+    @Id
+    private UUID profileId;
+
+    public UserProfileEntity(UserProfile userProfile) {
+        this.userId = userProfile.getUserId();
+        this.profileId = userProfile.getProfileId();
+    }
+}
