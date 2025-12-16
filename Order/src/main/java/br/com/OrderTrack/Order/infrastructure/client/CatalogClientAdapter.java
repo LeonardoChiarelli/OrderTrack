@@ -18,11 +18,11 @@ public class CatalogClientAdapter implements ProductGateway {
     private String productServiceUrl;
 
     @Override
-    public Optional<Product> findByName(String name) {
+    public Optional<Product> findById(UUID id) {
         try {
             String url = UriComponentsBuilder
                     .fromPath(productServiceUrl + "/orderTrack/product/all")
-                    .queryParam("name", name)
+                    .queryParam("id", id)
                     .toUriString();
 
             // O ideal seria um endpoint específico /search?name={name} que retorna ProductDetailsDTO

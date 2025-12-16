@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"br.com.OrderTrack.Order", "br.com.OrderTrack.Common"})
 @EnableAsync
 @EnableScheduling
 public class OrderApplication {

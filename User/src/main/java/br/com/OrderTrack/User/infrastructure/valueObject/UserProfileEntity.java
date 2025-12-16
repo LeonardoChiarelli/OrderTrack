@@ -1,5 +1,6 @@
 package br.com.OrderTrack.User.infrastructure.valueObject;
 
+import br.com.OrderTrack.Common.infrastructure.valueObject.UserProfileIDEntity;
 import br.com.OrderTrack.Order.domain.valueObject.UserProfile;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

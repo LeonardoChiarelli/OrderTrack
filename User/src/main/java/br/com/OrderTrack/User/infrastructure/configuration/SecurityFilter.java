@@ -1,5 +1,6 @@
 package br.com.OrderTrack.User.infrastructure.configuration;
 
+import br.com.OrderTrack.Common.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

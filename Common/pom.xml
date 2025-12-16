@@ -9,9 +9,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 	<groupId>br.com.OrderTrack</groupId>
-	<artifactId>User</artifactId>
+	<artifactId>Common</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>User</name>
+	<name>Common</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -39,12 +39,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>br.com.OrderTrack</groupId>
-			<artifactId>Common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

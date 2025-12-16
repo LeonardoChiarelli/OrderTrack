@@ -2,7 +2,7 @@ package br.com.OrderTrack.User.infrastructure.user;
 
 import br.com.OrderTrack.Order.application.user.dto.SignUpDTO;
 import br.com.OrderTrack.Order.domain.user.User;
-import br.com.OrderTrack.User.infrastructure.profile.ProfileEntity;
+import br.com.OrderTrack.Common.infrastructure.profile.ProfileEntity;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

@@ -6,12 +6,13 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public record OrderedItemsDTO(
         Long id,
 
         @NotBlank
-        String productName,
+        UUID productId,
 
         @NotNull
         @Positive

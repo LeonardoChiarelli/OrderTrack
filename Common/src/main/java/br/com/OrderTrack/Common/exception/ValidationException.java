@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Payment.general.infra.exceptions;
+package br.com.OrderTrack.Common.exception;
 
 public class ValidationException extends RuntimeException {
     public ValidationException(String message) {

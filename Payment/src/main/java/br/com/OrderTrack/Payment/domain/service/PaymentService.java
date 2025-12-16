@@ -1,13 +1,11 @@
 package br.com.OrderTrack.Payment.domain.service;
 
-import br.com.OrderTrack.Payment.domain.dto.MakePaymentDTO;
 import br.com.OrderTrack.Payment.domain.dto.PaymentDetailDTO;
 import br.com.OrderTrack.Payment.domain.model.Payment;
 import br.com.OrderTrack.Payment.domain.model.PaymentStatus;
 import br.com.OrderTrack.Payment.domain.repository.IPaymentMethodRepository;
 import br.com.OrderTrack.Payment.domain.repository.IPaymentRepository;
 import br.com.OrderTrack.Payment.general.infra.exceptions.ValidationException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

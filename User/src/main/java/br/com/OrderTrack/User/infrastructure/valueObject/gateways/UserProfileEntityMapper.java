@@ -1,7 +1,7 @@
 package br.com.OrderTrack.User.infrastructure.valueObject.gateways;
 
 import br.com.OrderTrack.Order.domain.valueObject.UserProfile;
-import br.com.OrderTrack.User.infrastructure.valueObject.UserProfileEntity;
+import br.com.OrderTrack.Common.infrastructure.valueObject.UserProfileEntity;
 
 public class UserProfileEntityMapper {
 

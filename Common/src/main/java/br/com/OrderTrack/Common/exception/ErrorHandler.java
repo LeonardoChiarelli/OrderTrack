@@ -1,4 +1,4 @@
-package br.com.OrderTrack.Payment.general.infra.exceptions;
+package br.com.OrderTrack.Common.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;

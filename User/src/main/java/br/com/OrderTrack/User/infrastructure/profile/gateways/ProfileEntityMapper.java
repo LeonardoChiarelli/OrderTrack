@@ -1,7 +1,7 @@
 package br.com.OrderTrack.User.infrastructure.profile.gateways;
 
 import br.com.OrderTrack.Order.domain.profile.Profile;
-import br.com.OrderTrack.User.infrastructure.profile.ProfileEntity;
+import br.com.OrderTrack.Common.infrastructure.profile.ProfileEntity;
 import org.springframework.stereotype.Component;
 
 @Component

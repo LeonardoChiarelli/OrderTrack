@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: "Common"
+  datasource:
+    url: ${NOTIFICATION_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8084
+
+logging:
+  level:
+    root: INFO
+
+app:
+  security:
+    token:
+      secret: ${TOKEN_PASSWORD}

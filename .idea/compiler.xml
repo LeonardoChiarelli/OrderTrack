@@ -13,6 +13,7 @@
         <module name="Product" />
         <module name="Track" />
         <module name="Inventory" />
+        <module name="Common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -23,6 +24,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Common" options="-parameters" />
       <module name="CommonEvents" options="-parameters" />
       <module name="Gateway" options="-parameters" />
       <module name="Inventory" options="-parameters" />

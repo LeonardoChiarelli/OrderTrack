@@ -43,27 +43,31 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
                 .build();
 
         List<OrderItem> items = new ArrayList<>();
+        BigDecimal totalPriceOrder = BigDecimal.ZERO;
 
-        dto.items().forEach(itemDto -> {
-            var product = productGateway.findByName(itemDto.productName())
-                    .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDto.productName()));
+        for (var itemDto : dto.items()) {
+            var product = productGateway.findById(itemDto.productId())
+                    .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDto.productId()));
 
             if (!product.isActive()) {
-                throw new DomainException("Produto inativo: " + itemDto.productName());
+                throw new DomainException("Produto inativo: " + itemDto.productId());
             }
+
+            BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(itemDto.quantity()));
+            totalPriceOrder = totalPriceOrder.add(itemTotal);
 
             items.add(OrderItem.builder()
                     .productId(product.getId())
                     .quantity(itemDto.quantity())
-                    .build());
-        });
-
+                    .unitPrice(product.getPrice())
+                .build());
+        }
         var order = Order.builder()
                 .consumerName(userName)
                 .consumerEmail(userEmail)
                 .shippingAddress(address)
                 .items(items)
-                .totalPrice()
+                .totalPrice(totalPriceOrder)
                 .build();
 
         var savedOrder = orderGateway.save(order);
@@ -75,9 +79,5 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
         eventPublisher.publish(new OrderCreatedEvent(savedOrder.getId(), eventItems), "OrderCreatedEvent", savedOrder.getId().toString());
 
         return savedOrder.getId();
-    }
-
-    public BigDecimal calculateTotal(OrderItem item, Product product) {
-        return product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
     }
 }

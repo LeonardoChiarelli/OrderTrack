@@ -1,6 +1,5 @@
-package br.com.OrderTrack.User.infrastructure.configuration;
+package br.com.OrderTrack.Common.security;
 
-import br.com.OrderTrack.Common.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

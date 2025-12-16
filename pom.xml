@@ -26,6 +26,7 @@
         <module>Inventory</module>
         <module>Product</module>
         <module>User</module>
+        <module>Common</module>
     </modules>
     <properties>
         <java.version>21</java.version>

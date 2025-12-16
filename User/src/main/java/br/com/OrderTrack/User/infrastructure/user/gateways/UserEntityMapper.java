@@ -1,8 +1,8 @@
 package br.com.OrderTrack.User.infrastructure.user.gateways;
 
 import br.com.OrderTrack.Order.domain.user.User;
-import br.com.OrderTrack.User.infrastructure.profile.gateways.ProfileEntityMapper;
-import br.com.OrderTrack.User.infrastructure.user.UserEntity;
+import br.com.OrderTrack.Common.infrastructure.profile.gateways.ProfileEntityMapper;
+import br.com.OrderTrack.Common.infrastructure.user.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
