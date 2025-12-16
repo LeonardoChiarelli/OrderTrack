@@ -1,37 +1,29 @@
 package br.com.OrderTrack.Order.domain.model;
 
 import br.com.OrderTrack.Order.domain.exception.DomainException;
-import br.com.OrderTrack.Product.domain.product.Product;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
 public class OrderItem {
 
     private final UUID id;
-    private final Product product;
+    private final UUID productId;
     private final Integer quantity;
-    private final BigDecimal unitPriceAtPurchase;
     private Order order;
 
 
     private OrderItem(
-            Product product,
+            UUID productId,
             Integer quantity
     ) {
-        if (product == null || quantity <= 0) {
+        if (productId == null || quantity <= 0) {
             throw new DomainException("All order item core must be provided.");
         }
 
         this.id = UUID.randomUUID();
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
-        this.unitPriceAtPurchase = product.getPrice();
-    }
-
-    public BigDecimal calculateTotal() {
-        return unitPriceAtPurchase.multiply(BigDecimal.valueOf(quantity));
     }
 
     public static OrderItemBuilder builder() {
@@ -42,8 +34,8 @@ public class OrderItem {
         return id;
     }
 
-    public Product getProduct() {
-        return product;
+    public UUID getProductId() {
+        return productId;
     }
 
     public Integer getQuantity() {
@@ -52,10 +44,6 @@ public class OrderItem {
 
     public Order getOrder() {
         return order;
-    }
-
-    public BigDecimal getUnitPriceAtPurchase() {
-        return unitPriceAtPurchase;
     }
 
     @Override
@@ -74,9 +62,8 @@ public class OrderItem {
     public String toString() {
         return "OrderItem{" +
                 "id=" + id +
-                ", product=" + product +
+                ", productId=" + productId +
                 ", quantity=" + quantity +
-                ", unitPriceAtPurchase=" + unitPriceAtPurchase +
                 ", order=" + order +
                 '}';
     }
@@ -86,13 +73,13 @@ public class OrderItem {
     }
 
     public static class OrderItemBuilder {
-        private Product product;
+        private UUID productId;
         private Integer quantity;
 
         public OrderItemBuilder() {}
 
-        public OrderItemBuilder product(Product product) {
-            this.product = product;
+        public OrderItemBuilder productId(UUID productId) {
+            this.productId = productId;
             return this;
         }
 
@@ -102,12 +89,12 @@ public class OrderItem {
         }
 
         public OrderItem build() {
-            if (product == null || quantity <= 0) {
+            if (productId == null || quantity <= 0) {
                 throw new DomainException("All order item core must be provided.");
             }
 
             return new OrderItem(
-                    this.product,
+                    this.productId,
                     this.quantity
             );
         }

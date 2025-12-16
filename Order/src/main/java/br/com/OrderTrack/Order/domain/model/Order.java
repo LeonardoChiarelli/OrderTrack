@@ -24,11 +24,13 @@ public class Order {
     private Order(String consumerName,
                   String consumerEmail,
                   Address shippingAddress,
-                  List<OrderItem> items) {
+                  List<OrderItem> items,
+                  BigDecimal totalPrice) {
         if (consumerName.isBlank() ||
                 consumerEmail.isBlank() ||
                 shippingAddress == null ||
-                items.isEmpty()) {
+                items.isEmpty() ||
+                totalPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new DomainException("All order core must be provided.");
         }
 
@@ -37,9 +39,7 @@ public class Order {
         this.consumerEmail = consumerEmail;
         this.shippingAddress = shippingAddress;
         this.orderDate = LocalDateTime.now();
-        this.totalPrice = items.stream()
-                .map(OrderItem::calculateTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.totalPrice = totalPrice;
         this.status = OrderStatus.PENDING_STOCK;
         this.items = items;
         items.forEach(i -> i.setOrder(this));
@@ -156,6 +156,7 @@ public class Order {
         private String consumerEmail;
         private Address shippingAddress;
         private List<OrderItem> items = new ArrayList<>();
+        private BigDecimal totalPrice;
 
         public OrderBuilder() {}
 
@@ -187,18 +188,25 @@ public class Order {
             return this;
         }
 
+        public OrderBuilder totalPrice(BigDecimal totalPrice) {
+            this.totalPrice = totalPrice;
+            return this;
+        }
+
         public Order build() {
             if (consumerName.isBlank() ||
                 consumerEmail.isBlank() ||
                 shippingAddress == null ||
-                items.isEmpty()
+                items.isEmpty() ||
+                totalPrice.compareTo(BigDecimal.ZERO) <= 0
             ) { throw new DomainException("All Order core must be provided."); }
 
             return new Order(
                     this.consumerName,
                     this.consumerEmail,
                     this.shippingAddress,
-                    this.items
+                    this.items,
+                    this.totalPrice = totalPrice
             );
         }
     }

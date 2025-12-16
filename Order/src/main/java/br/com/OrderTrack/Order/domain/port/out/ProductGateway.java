@@ -1,6 +1,6 @@
 package br.com.OrderTrack.Order.domain.port.out;
 
-import br.com.OrderTrack.Product.domain.product.Product;
+import br.com.OrderTrack.Order.domain.model.valueObject.Product;
 
 import java.util.Optional;
 

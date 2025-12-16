@@ -7,6 +7,7 @@ import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.domain.model.Order;
 import br.com.OrderTrack.Order.domain.model.OrderItem;
 import br.com.OrderTrack.Order.domain.model.valueObject.Address;
+import br.com.OrderTrack.Order.domain.model.valueObject.Product;
 import br.com.OrderTrack.Order.domain.port.in.CreateOrderInputPort;
 import br.com.OrderTrack.Order.domain.port.out.OrderGateway;
 import br.com.OrderTrack.Order.domain.port.out.ProductGateway;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +53,7 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
             }
 
             items.add(OrderItem.builder()
-                    .product(product)
+                    .productId(product.getId())
                     .quantity(itemDto.quantity())
                     .build());
         });
@@ -61,16 +63,21 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
                 .consumerEmail(userEmail)
                 .shippingAddress(address)
                 .items(items)
+                .totalPrice()
                 .build();
 
         var savedOrder = orderGateway.save(order);
 
         List<OrderCreatedEvent.OrderItemEventDTO> eventItems = savedOrder.getItems().stream()
-                .map(i -> new OrderCreatedEvent.OrderItemEventDTO(i.getProduct().getId(), i.getQuantity()))
+                .map(i -> new OrderCreatedEvent.OrderItemEventDTO(i.getProductId(), i.getQuantity()))
                 .toList();
 
         eventPublisher.publish(new OrderCreatedEvent(savedOrder.getId(), eventItems), "OrderCreatedEvent", savedOrder.getId().toString());
 
         return savedOrder.getId();
+    }
+
+    public BigDecimal calculateTotal(OrderItem item, Product product) {
+        return product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
     }
 }

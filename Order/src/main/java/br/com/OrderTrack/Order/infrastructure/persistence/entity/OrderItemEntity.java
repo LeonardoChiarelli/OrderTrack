@@ -1,12 +1,9 @@
 package br.com.OrderTrack.Order.infrastructure.persistence.entity;
 
-import br.com.OrderTrack.Order.application.dto.OrderedItemsDTO;
 import br.com.OrderTrack.Order.domain.model.OrderItem;
-import br.com.OrderTrack.Order.infrastructure.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -23,34 +20,21 @@ public class OrderItemEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "product_id")
-    private ProductEntity productEntity;
+    @Column(name = "product_id", nullable = false)
+    private UUID productId;
 
     private Integer quantity;
-    private BigDecimal unitPriceAtPurchase;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
 
-    public OrderItemEntity(OrderedItemsDTO item, ProductEntity productEntity) {
-        this.productEntity = productEntity;
-        this.quantity = item.quantity();
-        this.unitPriceAtPurchase = productEntity.getPrice();
-    }
-
-    public OrderItemEntity(OrderItem orderItem, ProductEntity productEntity, OrderEntity orderEntity) {
+    public OrderItemEntity(OrderItem orderItem, UUID productId, OrderEntity orderEntity) {
         this.id = orderItem.getId();
-        this.productEntity = productEntity;
+        this.productId = productId;
         this.quantity = orderItem.getQuantity();
-        this.unitPriceAtPurchase = orderItem.getUnitPriceAtPurchase();
         this.orderEntity = orderEntity;
 
-    }
-
-    public BigDecimal calculateTotal() {
-        return unitPriceAtPurchase.multiply(BigDecimal.valueOf(quantity));
     }
 
     public void setOrder(OrderEntity orderEntity) {

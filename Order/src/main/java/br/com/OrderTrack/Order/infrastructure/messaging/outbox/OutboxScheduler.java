@@ -15,9 +15,9 @@ public class OutboxScheduler {
     private OutboxRepository outboxRepository;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate; // Do Spring AMQP
+    private RabbitTemplate rabbitTemplate;
 
-    @Scheduled(fixedRate = 2000) // Roda a cada 2 segundos
+    @Scheduled(fixedRate = 2000)
     @Transactional
     public void processOutbox() {
         List<OutboxEntity> unprocessed = outboxRepository.findByProcessedFalse();

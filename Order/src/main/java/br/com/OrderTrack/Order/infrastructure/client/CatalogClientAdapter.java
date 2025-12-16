@@ -1,13 +1,14 @@
 package br.com.OrderTrack.Order.infrastructure.client;
 
 import br.com.OrderTrack.Order.domain.port.out.ProductGateway;
-import br.com.OrderTrack.Product.application.product.dto.ProductDetailsDTO;
-import br.com.OrderTrack.Product.domain.product.Product;
+import br.com.OrderTrack.Order.domain.model.valueObject.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CatalogClientAdapter implements ProductGateway {
 
@@ -26,10 +27,16 @@ public class CatalogClientAdapter implements ProductGateway {
 
             // O ideal seria um endpoint específico /search?name={name} que retorna ProductDetailsDTO
 
-            var response = rt.getForObject(url, ProductDetailsDTO.class);
-            return Optional.of(response.toDomain());
+            var response = rt.getForObject(url, ProductResponseDTO.class);
+            return Optional.of(Product.builder()
+                    .id(response.id())
+                    .name(response.name())
+                    .price(response.price())
+                    .active(true)
+                    .build());
         } catch (Exception e) {
             return Optional.empty();
         }
     }
+    private record ProductResponseDTO(UUID id, String name, BigDecimal price) {}
 }

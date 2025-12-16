@@ -3,12 +3,10 @@ package br.com.OrderTrack.Order.infrastructure.messaging.listener;
 import br.com.OrderTrack.Order.application.useCase.HandlePaymentApprovedUseCase;
 import br.com.OrderTrack.Order.application.useCase.HandlePaymentRejectedUseCase;
 import br.com.OrderTrack.Order.infrastructure.configuration.RabbitConfig;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -17,57 +15,31 @@ import java.util.UUID;
 @Component
 public class PaymentEventListener {
 
-    @Autowired
     private HandlePaymentApprovedUseCase approvedUseCase;
-
-    @Autowired
     private HandlePaymentRejectedUseCase rejectedUseCase;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    record PaymentEventDTO(@JsonProperty("orderId") UUID orderId) {}
 
     @RabbitListener(queues = RabbitConfig.PAYMENT_APPROVED_QUEUE)
-    public void handlePaymentApproved(String payload) {
+    public void handlePaymentApproved(PaymentEventDTO event) {
         try {
-            log.info("Recebendo evento de Pagamento Aprovado: {}", payload);
-            JsonNode node = objectMapper.readTree(payload);
-
-            if (!node.has("orderId")) {
-                log.error("Payload inválido: orderId ausente");
-                throw new AmqpRejectAndDontRequeueException("Invalid Payload");
-            }
-
-            String orderIdStr = node.get("orderId").asText();
-            UUID orderId = UUID.fromString(orderIdStr);
-
-            log.info("Processing Payment Approved for Order: {}", orderId);
-            approvedUseCase.execute(orderId);
-        } catch (AmqpRejectAndDontRequeueException e) {
-            throw e;
+            log.info("Recebendo evento de Pagamento Aprovado: {}", event.orderId());
+            approvedUseCase.execute(event.orderId());
         } catch (Exception e) {
-            log.error("Error processing approved payment: {}", e.getMessage());
-            // Prod: enviar para Dead Letter Queue (DLQ)
+            log.error("Erro ao processar pagamento aprovado. Enviando para DLQ.", e);
+            // Lança exceção específica para o RabbitMQ não reenfileirar infinitamente se configurado com DLQ
+            throw new AmqpRejectAndDontRequeueException("Erro fatal no processamento", e);
         }
     }
 
     @RabbitListener(queues = RabbitConfig.PAYMENT_REJECTED_QUEUE)
-    public void handlePaymentRejected(String payload) {
+    public void handlePaymentRejected(PaymentEventDTO event) {
         try {
-            log.info("Recebendo evento de Pagamento Rejeitado: {}", payload);
-            JsonNode node = objectMapper.readTree(payload);
-
-            if (!node.has("orderId")) {
-                throw new AmqpRejectAndDontRequeueException("Invalid Payload: OrderId out");
-            }
-
-            String orderIdStr = node.get("orderId").asText();
-            UUID orderId = UUID.fromString(orderIdStr);
-
-            log.info("Processing Payment Rejected for Order: {}", orderId);
-            rejectedUseCase.execute(orderId);
+            log.info("Processando Pagamento Rejeitado para Pedido: {}", event.orderId());
+            rejectedUseCase.execute(event.orderId());
         } catch (Exception e) {
-            log.error("Error processing rejected payment: {}", e.getMessage());
-            throw new RuntimeException(e);
+            log.error("Erro ao processar pagamento rejeitado.", e);
+            // Dependendo da regra, pode querer reenfileirar ou descartar
         }
     }
 }

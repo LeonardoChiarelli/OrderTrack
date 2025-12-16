@@ -1,6 +1,5 @@
 package br.com.OrderTrack.Order.infrastructure.persistence.repository;
 
-import br.com.OrderTrack.Order.application.report.mapper.SalesStatisticsMapperRecord;
 import br.com.OrderTrack.Order.infrastructure.persistence.entity.OrderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,7 +32,6 @@ public interface JPAOrderRepository extends JpaRepository<OrderEntity, Long> {
             WHERE o.orderDate = :yesterdayDate
             GROUP BY productEntity.category
 """)
-    List<SalesStatisticsMapperRecord> getTotalYesterdayBillingByCategory(LocalDate yesterdayDate);
 
     Optional<OrderEntity> findById(UUID id);
 }
