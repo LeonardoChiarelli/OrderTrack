@@ -43,7 +43,6 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
                     .build();
 
         List<OrderItem> items = new ArrayList<>();
-
         dto.items().forEach(itemDto -> {
             for (String productName : itemDto.productsName()) {
                 var product = productGateway.findByName(productName)
@@ -70,14 +69,6 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
         var savedOrder = orderGateway.save(order);
 
         eventPublisher.publish(new OrderCreatedEvent(savedOrder.getId()), "OrderCreatedEvent", savedOrder.getId().toString());
-
-        var paymentRequest = PaymentRequestedEvent.builder()
-                .orderId(savedOrder.getId())
-                .totalPrice(savedOrder.getTotalPrice())
-                .currency("BRL")
-                .build();
-
-        eventPublisher.publish(paymentRequest, "PaymentRequestedEvent", savedOrder.getId().toString());
 
         return savedOrder.getId();
     }

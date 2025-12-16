@@ -25,7 +25,6 @@ import java.util.UUID;
 public class OrderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String consumerName;
@@ -48,19 +47,6 @@ public class OrderEntity {
     )
     private List<OrderItemEntity> items = new ArrayList<>();
 
-    public OrderEntity(@Valid CreateOrderDTO dto, AddressEntity addressEntity, List<OrderItemEntity> items) {
-        this.consumerName = dto.consumerName();
-        this.consumerEmail = dto.consumerEmail();
-        this.shippingAddressEntity = addressEntity;
-        this.orderDate = LocalDateTime.now();
-        this.totalPrice = items.stream()
-                .map(OrderItemEntity::calculateTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        this.status = OrderStatus.NEW;
-        this.items = items;
-        items.forEach(i -> i.setOrder(this));
-    }
-
     public OrderEntity(Order order, AddressEntity addressEntity) {
         this.id = order.getId();
         this.consumerName = order.getConsumerName();
@@ -69,40 +55,5 @@ public class OrderEntity {
         this.orderDate = order.getOrderDate();
         this.totalPrice = order.getTotalPrice();
         this.status = order.getStatus();
-    }
-
-    public void markAsProcessing() {
-        if (status != OrderStatus.NEW) {
-            throw new InvalidOrderStateException("Order must be new.");
-        }
-        this.status = OrderStatus.PROCESSING;
-    }
-
-    public void markAsPackage() {
-        if (status != OrderStatus.PROCESSING) {
-            throw new InvalidOrderStateException("Order status be processing.");
-        }
-        this.status = OrderStatus.PACKAGE;
-    }
-
-    public void markAsOutForDelivery() {
-        if (status != OrderStatus.PACKAGE) {
-            throw new InvalidOrderStateException("Order must be package.");
-        }
-        this.status = OrderStatus.OUT_FOR_DELIVERY;
-    }
-
-    public void markAsDelivered() {
-        if (status != OrderStatus.OUT_FOR_DELIVERY) {
-            throw new InvalidOrderStateException("Order must be out for delivery.");
-        }
-        this.status = OrderStatus.DELIVERED;
-    }
-
-    public void markAsCanceled() {
-        if (status != OrderStatus.PROCESSING) {
-            throw new InvalidOrderStateException("Order must be processing.");
-        }
-        this.status = OrderStatus.CANCELED;
     }
 }

@@ -13,9 +13,38 @@ public class RabbitConfig {
 
     public static final String PAYMENT_APPROVED_QUEUE = "payment.approved.order.queue";
     public static final String PAYMENT_REJECTED_QUEUE = "payment.rejected.order.queue";
+    public static final String PAYMENT_APPROVED_DLQ = "payment.approved.dlq";
+    public static final String STOCK_RESERVED_QUEUE = "stock.reserved.order.queue";
+    public static final String STOCK_FAILED_QUEUE = "stock.failed.order.queue";
+
     public static final String ORDER_EXCHANGE = "order-exchange";
     public static final String PAYMENT_EXCHANGE = "payment-exchange";
-    public static final String PAYMENT_APPROVED_DLQ = "payment.approved.dlq";
+    public static final String INVENTORY_EXCHANGE = "inventory-exchange";
+
+    @Bean
+    public Queue stockReservedQueue() {
+        return QueueBuilder.durable(STOCK_RESERVED_QUEUE).build();
+    }
+
+    @Bean
+    public Queue stockFailedQueue() {
+        return QueueBuilder.durable(STOCK_FAILED_QUEUE).build();
+    }
+
+    @Bean
+    public TopicExchange inventoryExchange() {
+        return new TopicExchange(INVENTORY_EXCHANGE);
+    }
+
+    @Bean
+    public Binding bindingStockReserved(Queue stockReservedQueue, TopicExchange inventoryExchange) {
+        return BindingBuilder.bind(stockReservedQueue).to(inventoryExchange).with("stock.reserved.#");
+    }
+
+    @Bean
+    public Binding bindingStockFailed(Queue stockFailedQueue, TopicExchange inventoryExchange) {
+        return BindingBuilder.bind(stockFailedQueue).to(inventoryExchange).with("stock.failed.#");
+    }
 
     @Bean
     public Queue paymentApprovedDlq() {
