@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.domain.event;
 
+import br.com.OrderTrack.Common.exception.ValidationException;
 import br.com.OrderTrack.Order.domain.exception.DomainException;
 
 import java.math.BigDecimal;

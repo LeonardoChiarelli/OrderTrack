@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.domain.model.valueObject;
 
+import br.com.OrderTrack.Common.exception.ValidationException;
 import br.com.OrderTrack.Order.domain.exception.DomainException;
 
 public class Address {

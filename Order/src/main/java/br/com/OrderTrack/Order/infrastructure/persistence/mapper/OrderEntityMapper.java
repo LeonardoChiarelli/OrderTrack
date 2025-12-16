@@ -16,18 +16,25 @@ public class OrderEntityMapper {
     private OrderItemEntityMapper orderItemEntityMapper;
 
     public OrderEntity toEntity(Order order) {
-        return new OrderEntity(order, new AddressEntity(order.getShippingAddress()));
+        var orderEntity = new OrderEntity(order, new AddressEntity(order.getShippingAddress()));
+
+        var itemsEntities = order.getItems().stream()
+                .map(item -> orderItemEntityMapper.toEntity(item, orderEntity))
+                .toList();
+
+        orderEntity.getItems().addAll(itemsEntities);
+        return orderEntity;
     }
 
     public Order toDomain(OrderEntity orderEntity) {
         return Order.builder()
                 .consumerName(orderEntity.getConsumerName())
                 .consumerEmail(orderEntity.getConsumerEmail())
-                .shippingAddress(addressEntityMapper.
-                        toDomain(orderEntity.getShippingAddressEntity()))
+                .shippingAddress(addressEntityMapper.toDomain(orderEntity.getShippingAddressEntity()))
                 .items(orderEntity.getItems().stream()
-                        .map(i -> orderItemEntityMapper.toDomain(i))
+                        .map(orderItemEntityMapper::toDomain)
                         .toList())
-            .build();
+                .totalPrice(orderEntity.getTotalPrice())
+                .build();
     }
 }

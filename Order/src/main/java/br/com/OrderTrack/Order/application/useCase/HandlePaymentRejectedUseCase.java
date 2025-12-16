@@ -2,6 +2,7 @@ package br.com.OrderTrack.Order.application.useCase;
 
 import br.com.OrderTrack.Order.domain.event.OrderCancelledEvent;
 import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
+import br.com.OrderTrack.Order.domain.port.in.HandlePaymentRejectedInputPort;
 import br.com.OrderTrack.Order.domain.port.out.OrderGateway;
 import br.com.OrderTrack.Order.domain.model.Order;
 import br.com.OrderTrack.Order.domain.model.OrderStatus;
@@ -11,12 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class HandlePaymentRejectedUseCase {
+public class HandlePaymentRejectedUseCase implements HandlePaymentRejectedInputPort {
     private final OrderGateway repository;
     private final RabbitEventPublisherAdapter eventPublisher;
 
@@ -35,9 +37,13 @@ public class HandlePaymentRejectedUseCase {
         order.markAsCanceled();
         repository.save(order);
 
-        OrderCancelledEvent event = new OrderCancelledEvent(orderId, order.getItems());
+        List<OrderCancelledEvent.OrderItemEventDTO> items = order.getItems().stream()
+                .map(i -> new OrderCancelledEvent.OrderItemEventDTO(i.getProductId(), i.getQuantity()))
+                .toList();
+
+        OrderCancelledEvent event = new OrderCancelledEvent(orderId, items);
         eventPublisher.publish(event, "OrderCancelledEvent", orderId.toString());
 
-        log.info("Order {} canceled. OrderCancelledEvent published for compensation.", orderId);
+        log.info("Order {} canceled due to payment rejection.", orderId);
     }
 }

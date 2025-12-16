@@ -1,6 +1,7 @@
 package br.com.OrderTrack.Order.application.useCase;
 
 import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
+import br.com.OrderTrack.Order.domain.port.in.HandlePaymentApprovedInputPort;
 import br.com.OrderTrack.Order.domain.port.out.OrderGateway;
 import br.com.OrderTrack.Order.domain.model.Order;
 import br.com.OrderTrack.Order.domain.model.OrderStatus;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class HandlePaymentApprovedUseCase {
+public class HandlePaymentApprovedUseCase implements HandlePaymentApprovedInputPort {
 
     private final OrderGateway repository;
     private final RabbitEventPublisherAdapter eventPublisher;
@@ -23,6 +24,7 @@ public class HandlePaymentApprovedUseCase {
         this.eventPublisher = eventPublisher;
     }
 
+    @Override
     @Transactional
     public void execute(UUID orderId) {
         log.info("Processando aprovação do pagamento para o pedido {}", orderId);
@@ -45,8 +47,7 @@ public class HandlePaymentApprovedUseCase {
 
         log.info("Status do pedido {} atualizado para PAID", orderId);
 
-        eventPublisher.publish(new OrderPaidEvent(orderId), "OrderPaidEvent", orderId.toString());
-    }
+        eventPublisher.publish(new Object() { public final UUID id = orderId; }, "OrderPaidEvent", orderId.toString());    }
 
     public record OrderPaidEvent(UUID orderId) {}
 }

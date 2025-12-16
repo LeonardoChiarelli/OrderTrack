@@ -1,9 +1,8 @@
 package br.com.OrderTrack.Order.infrastructure.web;
 
+import br.com.OrderTrack.Common.security.UserPrincipal;
 import br.com.OrderTrack.Order.application.dto.CreateOrderDTO;
-import br.com.OrderTrack.Order.application.dto.OrderDetailsDTO;
-import br.com.OrderTrack.Order.application.order.port.in.CreateOrderInputPort;
-import br.com.OrderTrack.Order.infrastructure.user.UserEntity;
+import br.com.OrderTrack.Order.domain.port.in.CreateOrderInputPort;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +22,14 @@ public class OrderController {
 
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<OrderDetailsDTO> creteOrder(
+    public ResponseEntity<Void> creteOrder(
             @RequestBody @Valid CreateOrderDTO dto,
             UriComponentsBuilder uriBuilder,
-            @AuthenticationPrincipal UserEntity user
+            @AuthenticationPrincipal UserPrincipal user
     ){
-        UUID orderId = createOrderUseCase.execute(dto, user.getEmail(), user.getName());
+        UUID orderId = createOrderUseCase.execute(dto, user.email(), user.name());
         var uri = uriBuilder.path("/orderTrack/order/{id}").buildAndExpand(orderId).toUri();
+
         return ResponseEntity.created(uri).build();
     }
 }

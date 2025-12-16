@@ -3,6 +3,7 @@ package br.com.OrderTrack.Order.infrastructure.client;
 import br.com.OrderTrack.Order.domain.port.out.ProductGateway;
 import br.com.OrderTrack.Order.domain.model.valueObject.Product;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
+@Component
 public class CatalogClientAdapter implements ProductGateway {
 
     private final RestTemplate rt = new RestTemplate();
@@ -21,13 +23,13 @@ public class CatalogClientAdapter implements ProductGateway {
     public Optional<Product> findById(UUID id) {
         try {
             String url = UriComponentsBuilder
-                    .fromPath(productServiceUrl + "/orderTrack/product/all")
-                    .queryParam("id", id)
+                    .fromPath(productServiceUrl + "/orderTrack/product/" + id)
                     .toUriString();
 
-            // O ideal seria um endpoint específico /search?name={name} que retorna ProductDetailsDTO
+            var response = rt.getForObject(url, ProductDetailsResponse.class);
 
-            var response = rt.getForObject(url, ProductResponseDTO.class);
+            if (response == null) return Optional.empty();
+
             return Optional.of(Product.builder()
                     .id(response.id())
                     .name(response.name())
@@ -38,5 +40,6 @@ public class CatalogClientAdapter implements ProductGateway {
             return Optional.empty();
         }
     }
-    private record ProductResponseDTO(UUID id, String name, BigDecimal price) {}
+
+    private record ProductDetailsResponse(UUID id, String name, BigDecimal price, boolean active) {}
 }
