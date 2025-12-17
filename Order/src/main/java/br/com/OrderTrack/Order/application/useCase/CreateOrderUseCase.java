@@ -7,7 +7,6 @@ import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.domain.model.Order;
 import br.com.OrderTrack.Order.domain.model.OrderItem;
 import br.com.OrderTrack.Order.domain.model.valueObject.Address;
-import br.com.OrderTrack.Order.domain.model.valueObject.Product;
 import br.com.OrderTrack.Order.domain.port.in.CreateOrderInputPort;
 import br.com.OrderTrack.Order.domain.port.out.OrderGateway;
 import br.com.OrderTrack.Order.domain.port.out.ProductGateway;
@@ -15,6 +14,8 @@ import br.com.OrderTrack.Order.infrastructure.messaging.adapter.RabbitEventPubli
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Counter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,6 +29,20 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
     private final OrderGateway orderGateway;
     private final ProductGateway productGateway;
     private final RabbitEventPublisherAdapter eventPublisher;
+    private final Counter orderCreatedCounter;
+
+    public CreateOrderUseCase(OrderGateway orderGateway,
+                              ProductGateway productGateway,
+                              RabbitEventPublisherAdapter eventPublisher,
+                              MeterRegistry registry) {
+        this.orderGateway = orderGateway;
+        this.productGateway = productGateway;
+        this.eventPublisher = eventPublisher;
+
+        this.orderCreatedCounter = Counter.builder("order_created_total")
+                .description("Total de pedidos criados com sucesso")
+                .register(registry);
+    }
 
     @Override
     @Transactional
@@ -77,6 +92,8 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
                 .toList();
 
         eventPublisher.publish(new OrderCreatedEvent(savedOrder.getId(), eventItems), "OrderCreatedEvent", savedOrder.getId().toString());
+
+        orderCreatedCounter.increment();
 
         return savedOrder.getId();
     }

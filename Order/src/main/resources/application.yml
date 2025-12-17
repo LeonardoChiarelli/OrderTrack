@@ -12,20 +12,35 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  rabbitmq:
+  RabbitMQ:
     host: localhost
     port: 5672
     username: guest
     password: guest
-
 server:
   port: 8081
-
 logging:
   level:
     root: INFO
-
 app:
   security:
     token:
       secret: ${TOKEN_PASSWORD}
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, Prometheus, metrics
+    endpoint:
+      health:
+        show-details: always
+  resilience4j:
+    circuit breaker:
+      instances:
+        productService:
+          registerHealthIndicator: true
+          slidingWindowSize: 10
+          minimumNumberOfCalls: 5
+          permittedNumberOfCallsInHalfOpenState: 3
+          waitDurationInOpenState: 5s
+          failureRateThreshold: 50

@@ -16,10 +16,12 @@ public class RabbitConfig {
     public static final String PAYMENT_APPROVED_DLQ = "payment.approved.dlq";
     public static final String STOCK_RESERVED_QUEUE = "stock.reserved.order.queue";
     public static final String STOCK_FAILED_QUEUE = "stock.failed.order.queue";
+    public static final String PRODUCT_EVENTS_QUEUE = "product.events.order.queue";
 
     public static final String ORDER_EXCHANGE = "order-exchange";
     public static final String PAYMENT_EXCHANGE = "payment-exchange";
     public static final String INVENTORY_EXCHANGE = "inventory-exchange";
+    public static final String PRODUCT_EXCHANGE = "product-exchange";
 
     @Bean
     public Queue stockReservedQueue() {
@@ -89,5 +91,20 @@ public class RabbitConfig {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(jsonMessageConverter());
         return template;
+    }
+
+    @Bean
+    public Queue productEventsQueue() {
+        return QueueBuilder.durable(PRODUCT_EVENTS_QUEUE).build();
+    }
+
+    @Bean
+    public TopicExchange productExchange() {
+        return new TopicExchange(PRODUCT_EXCHANGE);
+    }
+
+    @Bean
+    public Binding bindingProductEvents(Queue productEventsQueue, TopicExchange productExchange) {
+        return BindingBuilder.bind(productEventsQueue).to(productExchange).with("product.#");
     }
 }
