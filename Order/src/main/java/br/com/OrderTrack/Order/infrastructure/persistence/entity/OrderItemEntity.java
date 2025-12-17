@@ -4,6 +4,7 @@ import br.com.OrderTrack.Order.domain.model.OrderItem;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +24,8 @@ public class OrderItemEntity {
     @Column(name = "product_id", nullable = false)
     private UUID productId;
 
+    private BigDecimal unitPrice;
+
     private Integer quantity;
 
     @ManyToOne(optional = false)
@@ -34,7 +37,7 @@ public class OrderItemEntity {
         this.productId = productId;
         this.quantity = orderItem.getQuantity();
         this.orderEntity = orderEntity;
-
+        this.unitPrice = orderItem.getUnitPrice();
     }
 
     public void setOrder(OrderEntity orderEntity) {
