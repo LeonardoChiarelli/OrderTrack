@@ -4,6 +4,7 @@ import br.com.OrderTrack.Order.application.useCase.HandlePaymentApprovedUseCase;
 import br.com.OrderTrack.Order.application.useCase.HandlePaymentRejectedUseCase;
 import br.com.OrderTrack.Order.infrastructure.configuration.RabbitConfig;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -13,12 +14,13 @@ import java.util.UUID;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class PaymentEventListener {
 
     private HandlePaymentApprovedUseCase approvedUseCase;
     private HandlePaymentRejectedUseCase rejectedUseCase;
 
-    record PaymentEventDTO(@JsonProperty("orderId") UUID orderId) {}
+    public record PaymentEventDTO(@JsonProperty("orderId") UUID orderId) {}
 
     @RabbitListener(queues = RabbitConfig.PAYMENT_APPROVED_QUEUE)
     public void handlePaymentApproved(PaymentEventDTO event) {

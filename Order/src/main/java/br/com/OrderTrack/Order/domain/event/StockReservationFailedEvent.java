@@ -1,4 +1,6 @@
 package br.com.OrderTrack.Order.domain.event;
 
-public class StockReservationFailedEvent {
+import java.util.UUID;
+
+public record StockReservationFailedEvent(UUID orderId, String reason) {
 }

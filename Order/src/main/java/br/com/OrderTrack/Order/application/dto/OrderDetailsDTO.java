@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.application.dto;
 
+import br.com.OrderTrack.Order.domain.model.OrderStatus;
 import br.com.OrderTrack.Order.infrastructure.persistence.entity.valueObject.AddressEntity;
 import br.com.OrderTrack.Order.infrastructure.persistence.entity.OrderEntity;
 import br.com.OrderTrack.Order.infrastructure.persistence.entity.OrderItemEntity;

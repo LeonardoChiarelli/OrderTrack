@@ -1,4 +1,6 @@
 package br.com.OrderTrack.Order.domain.event;
 
-public class StockReservedEvent {
+import java.util.UUID;
+
+public record StockReservedEvent(UUID orderId) {
 }

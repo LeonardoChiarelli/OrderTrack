@@ -40,7 +40,7 @@ public class CancelOrderUseCase implements CancelOrderInputPort {
         repository.save(order);
 
         List<OrderCancelledEvent.OrderItemEventDTO> items = order.getItems().stream()
-                .map(i -> new OrderCancelledEvent.OrderItemEventDTO(i.getProduct().getId(), i.getQuantity()))
+                .map(i -> new OrderCancelledEvent.OrderItemEventDTO(i.getProductId(), i.getQuantity()))
                 .toList();
 
         OrderCancelledEvent event = new OrderCancelledEvent(orderId, items);

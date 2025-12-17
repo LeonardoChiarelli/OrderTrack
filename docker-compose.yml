@@ -50,8 +50,8 @@ services:
       - rabbitmq
       - mysql
 
-  common-events-service:
-    build: ../OrderTrack/CommonEvents
+  common-service:
+    build: ../OrderTrack/Common
     environment:
       SPRING_PROFILES_ACTIVE: dev
     depends_on:
@@ -88,7 +88,7 @@ services:
     depends_on:
       - mysql
 
-  prometheus:
+  Prometheus:
     image: prom/prometheus:latest
     volumes:
       - ./config/prometheus.yml:/etc/prometheus.yml
@@ -98,7 +98,7 @@ services:
     ports:
       - "9090:9090"
 
-  grafana:
+  Grafana:
     image: grafana/grafana:latest
     volumes:
       - grafana_data:/grafana
