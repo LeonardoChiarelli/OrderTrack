@@ -29,6 +29,7 @@ public class OutboxEntity {
     private String payload;
 
     private LocalDateTime createdAt;
-
     private boolean processed;
+    private String traceId;
+    private String spanId;
 }

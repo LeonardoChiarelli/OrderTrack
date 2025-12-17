@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.application.useCase;
 
+import br.com.OrderTrack.Order.domain.event.OrderPaidEvent;
 import br.com.OrderTrack.Order.domain.exception.EntityNotFoundException;
 import br.com.OrderTrack.Order.domain.port.in.HandlePaymentApprovedInputPort;
 import br.com.OrderTrack.Order.domain.port.out.OrderGateway;
@@ -47,8 +48,6 @@ public class HandlePaymentApprovedUseCase implements HandlePaymentApprovedInputP
 
         log.info("Status do pedido {} atualizado para PAID", orderId);
 
-        eventPublisher.publish(new Object() { public final UUID id = orderId; }, "OrderPaidEvent", orderId.toString());    }
-
-    public record OrderPaidEvent(UUID orderId) {}
+        eventPublisher.publish(new OrderPaidEvent(orderId), "OrderPaidEvent", orderId.toString());    }
 }
 
