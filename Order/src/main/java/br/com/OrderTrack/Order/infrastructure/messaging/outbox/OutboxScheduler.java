@@ -1,6 +1,7 @@
 package br.com.OrderTrack.Order.infrastructure.messaging.outbox;
 
 import io.micrometer.tracing.Tracer;
+import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 public class OutboxScheduler {
 
@@ -34,21 +36,25 @@ public class OutboxScheduler {
         List<OutboxEntity> unprocessed = outboxRepository.findByProcessedFalse(pageRequest);
 
         for (OutboxEntity event : unprocessed) {
-            rabbitTemplate.convertAndSend("order-exchange", "", event.getPayload(), m -> {
-                MessageProperties properties = m.getMessageProperties();
-                properties.setHeader("X-Correlation-ID", event.getId().toString());
+            try {
+                rabbitTemplate.convertAndSend("order-exchange", "", event.getPayload(), m -> {
+                    MessageProperties properties = m.getMessageProperties();
+                    properties.setHeader("X-Correlation-ID", event.getId().toString());
 
-                if (event.getTraceId() != null && event.getSpanId() != null) {
-                    String traceParent = String.format("00-%s-%s-01", event.getTraceId(), event.getSpanId());
-                    properties.setHeader("traceparent", traceParent);
+                    if (event.getTraceId() != null && event.getSpanId() != null) {
+                        String traceParent = String.format("00-%s-%s-01", event.getTraceId(), event.getSpanId());
+                        properties.setHeader("traceparent", traceParent);
 
-                    properties.setHeader("X-B3-TraceId", event.getTraceId());
-                    properties.setHeader("X-B3-SpanId", event.getSpanId());
-                }
-                return m;
-            });
+                        properties.setHeader("X-B3-TraceId", event.getTraceId());
+                        properties.setHeader("X-B3-SpanId", event.getSpanId());
+                    }
+                    return m;
+                });
 
-            event.setProcessed(true);
+                event.setProcessed(true);
+            } catch (Exception e) {
+                log.error("Erro fatal ao processar outbox event {}", event.getId(), e);
+            }
             outboxRepository.save(event);
         }
     }
