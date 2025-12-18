@@ -1,5 +1,6 @@
 package br.com.OrderTrack.Order.infrastructure.messaging.outbox;
 
+import io.micrometer.tracing.Tracer;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,6 +23,9 @@ public class OutboxScheduler {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private Tracer tracer;
+
     @Scheduled(fixedRate = 500)
     @SchedulerLock(name = "OutboxScheduler_processOutbox", lockAtLeastFor = "PT0.1S", lockAtMostFor = "PT2S")
     @Transactional
@@ -34,7 +38,10 @@ public class OutboxScheduler {
                 MessageProperties properties = m.getMessageProperties();
                 properties.setHeader("X-Correlation-ID", event.getId().toString());
 
-                if (event.getTraceId() != null) {
+                if (event.getTraceId() != null && event.getSpanId() != null) {
+                    String traceParent = String.format("00-%s-%s-01", event.getTraceId(), event.getSpanId());
+                    properties.setHeader("traceparent", traceParent);
+
                     properties.setHeader("X-B3-TraceId", event.getTraceId());
                     properties.setHeader("X-B3-SpanId", event.getSpanId());
                 }
