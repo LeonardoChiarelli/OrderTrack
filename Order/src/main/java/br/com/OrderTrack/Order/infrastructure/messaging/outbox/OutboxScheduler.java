@@ -22,8 +22,8 @@ public class OutboxScheduler {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Scheduled(fixedRate = 2000)
-    @SchedulerLock(name = "OutboxScheduler_processOutbox", lockAtLeastFor = "PT1S", lockAtMostFor = "PT10S")
+    @Scheduled(fixedRate = 500)
+    @SchedulerLock(name = "OutboxScheduler_processOutbox", lockAtLeastFor = "PT0.1S", lockAtMostFor = "PT2S")
     @Transactional
     public void processOutbox() {
         var pageRequest = PageRequest.of(0, 100, Sort.by("createdAt").ascending());
