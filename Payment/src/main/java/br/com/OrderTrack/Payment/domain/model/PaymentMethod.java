@@ -16,6 +16,12 @@ public class PaymentMethod {
         this.active = active;
     }
 
+    private PaymentMethod(UUID id, String name, boolean active) {
+        this.id = id;
+        this.name = name;
+        this.active = active;
+    }
+
     public static PaymentMethodBuilder builder() {
         return new PaymentMethodBuilder();
     }
@@ -60,8 +66,14 @@ public class PaymentMethod {
     }
 
     public static class PaymentMethodBuilder {
+        private UUID id;
         private String name;
         private boolean active;
+
+        public PaymentMethodBuilder id(UUID id) {
+            this.id = id;
+            return this;
+        }
 
         public PaymentMethodBuilder name(String name) {
             this.name = name;
@@ -76,6 +88,9 @@ public class PaymentMethod {
         public PaymentMethod build() {
             if (name.isEmpty()) {
                 throw new DomainException("Payment method name cannot be empty");
+            }
+            if (id != null) {
+                return  new PaymentMethod(id, name, active);
             }
             return new PaymentMethod(name, active);
         }

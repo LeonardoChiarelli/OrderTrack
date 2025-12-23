@@ -32,6 +32,21 @@ public class Payment {
         this.transactionDate = LocalDateTime.now();
     }
 
+    private Payment(UUID id, UUID orderId, BigDecimal amount, PaymentMethod paymentMethod, PaymentDetails paymentDetails) {
+        if (orderId == null) throw new DomainException("Order ID is required.");
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) throw new DomainException("Invalid payment amount.");
+        if (paymentMethod == null) throw new DomainException("Payment method is required.");
+        if (paymentDetails == null) throw new DomainException("Payment details is required.");
+
+        this.id = id;
+        this.orderId = orderId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.paymentDetails = paymentDetails;
+        this.status = PaymentStatus.PENDING;
+        this.transactionDate = LocalDateTime.now();
+    }
+
     public static PaymentBuilder builder() {
         return new PaymentBuilder();
     }
@@ -122,10 +137,16 @@ public class Payment {
     }
 
     public static class PaymentBuilder {
+        private UUID id;
         private UUID orderId;
         private BigDecimal amount;
         private PaymentMethod paymentMethod;
         private PaymentDetails paymentDetails;
+
+        public PaymentBuilder id(UUID id) {
+            this.id = id;
+            return this;
+        }
 
         public PaymentBuilder orderId(UUID orderId) {
             this.orderId = orderId;
@@ -149,6 +170,9 @@ public class Payment {
         }
 
         public Payment  build() {
+            if (id != null) {
+                return new Payment(id, orderId, amount, paymentMethod, paymentDetails);
+            }
             return new Payment(orderId, amount, paymentMethod, paymentDetails);
         }
     }
