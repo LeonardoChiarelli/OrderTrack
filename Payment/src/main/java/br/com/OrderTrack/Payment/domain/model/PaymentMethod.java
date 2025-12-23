@@ -1,34 +1,83 @@
 package br.com.OrderTrack.Payment.domain.model;
 
-import br.com.OrderTrack.Payment.domain.dto.RegistryAPaymentMethodDTO;
-import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import br.com.OrderTrack.Payment.domain.exception.DomainException;
 
-@Entity
-@Table(name = "payment_methods")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@EqualsAndHashCode(of = "id")
+import java.util.Objects;
+import java.util.UUID;
+
 public class PaymentMethod {
+    private final UUID id;
+    private final String name;
+    private final boolean active;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-    private Boolean active;
-
-    public PaymentMethod(@Valid RegistryAPaymentMethodDTO dto) {
-        this.name = dto.name();
-        this.active = true;
+    private PaymentMethod(String name, boolean active) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.active = active;
     }
 
-    public void changeStatus(boolean status) {
-        this.active = status;
+    public static PaymentMethodBuilder builder() {
+        return new PaymentMethodBuilder();
+    }
+
+    public void validateIsActive() {
+        if (!this.active) {
+            throw new DomainException(String.format("Payment method  %s is currently inactive.", this.name));
+        }
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        PaymentMethod that = (PaymentMethod) o;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "PaymentMethod{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", active=" + active +
+                '}';
+    }
+
+    public static class PaymentMethodBuilder {
+        private String name;
+        private boolean active;
+
+        public PaymentMethodBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public PaymentMethodBuilder active(boolean active) {
+            this.active = active;
+            return this;
+        }
+
+        public PaymentMethod build() {
+            if (name.isEmpty()) {
+                throw new DomainException("Payment method name cannot be empty");
+            }
+            return new PaymentMethod(name, active);
+        }
     }
 }

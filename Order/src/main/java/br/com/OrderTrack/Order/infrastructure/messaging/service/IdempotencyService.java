@@ -4,6 +4,7 @@ import br.com.OrderTrack.Order.infrastructure.persistence.entity.ProcessedEventE
 import br.com.OrderTrack.Order.infrastructure.persistence.repository.JPAProcessedEventsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +20,18 @@ public class IdempotencyService {
 
     @Transactional
     public <T> void process(String messageId, T event, Consumer<T> action) {
-        if (repository.existsById(messageId)) {
-            log.info("Evento duplicado ignorado: {}", messageId);
+        try {
+            repository.saveAndFlush(new ProcessedEventEntity(messageId, LocalDateTime.now()));
+        } catch (DataIntegrityViolationException e) {
+            log.info("Duplicated event ignored (Idempotency Check): {}", messageId);
             return;
         }
 
-        action.accept(event);
-
-        repository.save(new ProcessedEventEntity(messageId, LocalDateTime.now()));
+        try {
+            action.accept(event);
+        } catch (Exception e) {
+            log.error("Error processing event {}. Transaction will rollback.", messageId, e);
+            throw e;
+        }
     }
 }

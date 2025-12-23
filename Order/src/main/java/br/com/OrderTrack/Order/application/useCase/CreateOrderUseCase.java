@@ -57,33 +57,22 @@ public class CreateOrderUseCase implements CreateOrderInputPort {
                 .complement(dto.shippingAddress().complement())
                 .build();
 
-        List<OrderItem> items = new ArrayList<>();
-        BigDecimal totalPriceOrder = BigDecimal.ZERO;
-
-        for (var itemDto : dto.items()) {
-            var product = productGateway.findById(itemDto.productId())
-                    .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado: " + itemDto.productId()));
-
-            if (!product.isActive()) {
-                throw new DomainException("Produto inativo: " + itemDto.productId());
-            }
-
-            BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(itemDto.quantity()));
-            totalPriceOrder = totalPriceOrder.add(itemTotal);
-
-            items.add(OrderItem.builder()
-                    .productId(product.getId())
-                    .quantity(itemDto.quantity())
-                    .unitPrice(product.getPrice())
-                .build());
-        }
         var order = Order.builder()
                 .consumerName(userName)
                 .consumerEmail(userEmail)
                 .shippingAddress(address)
-                .items(items)
-                .totalPrice(totalPriceOrder)
                 .build();
+
+        for (var itemDto : dto.items()) {
+            var product = productGateway.findById(itemDto.productId())
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found: " + itemDto.productId()));
+
+            if (!product.isActive()) {
+                throw new DomainException("Product inactive: " + itemDto.productId());
+            }
+
+            order.addItem(product.getId(), itemDto.quantity(), product.getPrice());
+        }
 
         var savedOrder = orderGateway.save(order);
 

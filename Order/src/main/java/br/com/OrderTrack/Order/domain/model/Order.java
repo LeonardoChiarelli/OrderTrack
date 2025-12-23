@@ -6,10 +6,7 @@ import br.com.OrderTrack.Order.domain.model.valueObject.Address;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Order {
     private final UUID id;
@@ -17,20 +14,16 @@ public class Order {
     private final String consumerEmail;
     private final Address shippingAddress;
     private final LocalDateTime orderDate;
-    private final BigDecimal totalPrice;
+    private BigDecimal totalPrice;
     private OrderStatus status;
-    private final List<OrderItem> items;
+    private List<OrderItem> items;
 
     private Order(String consumerName,
                   String consumerEmail,
-                  Address shippingAddress,
-                  List<OrderItem> items,
-                  BigDecimal totalPrice) {
+                  Address shippingAddress) {
         if (consumerName.isBlank() ||
                 consumerEmail.isBlank() ||
-                shippingAddress == null ||
-                items.isEmpty() ||
-                totalPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                shippingAddress == null) {
             throw new DomainException("All order core must be provided.");
         }
 
@@ -39,28 +32,49 @@ public class Order {
         this.consumerEmail = consumerEmail;
         this.shippingAddress = shippingAddress;
         this.orderDate = LocalDateTime.now();
-        this.totalPrice = totalPrice;
+        this.totalPrice = BigDecimal.ZERO;
         this.status = OrderStatus.PENDING_STOCK;
-        this.items = items;
-        items.forEach(i -> i.setOrder(this));
     }
 
     public static OrderBuilder builder() {
         return new OrderBuilder();
     }
 
+    public void addItem(UUID productId, Integer quantity, BigDecimal unitPrice) {
+        if (this.status != OrderStatus.PENDING_STOCK) {
+            throw new DomainException("Cannot add items to an order that is not in PENDING_STOCK state.");
+        }
+
+        var item = OrderItem.builder()
+                .productId(productId)
+                .quantity(quantity)
+                .unitPrice(unitPrice)
+                .build();
+
+        item.setOrder(this);
+        this.items.add(item);
+        recalculateTotal();
+    }
+
+    private void recalculateTotal() {
+        this.totalPrice = items.stream()
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (this.totalPrice.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new DomainException("Total price must be greater than zero.");
+        }
+    }
+
 
     public void markAsPendingPayment() {
-        if (status != OrderStatus.PENDING_STOCK) {
-            throw new InvalidOrderStateException("Order must be pending payment.");
-        }
+        validateStateTransition(OrderStatus.PENDING_STOCK, OrderStatus.PENDING_PAYMENT);
         this.status = OrderStatus.PENDING_PAYMENT;
     }
 
     public void markAsPaid() {
-        if (status != OrderStatus.PENDING_PAYMENT) {
-            throw new InvalidOrderStateException("Order must be new.");
-        }
+        if (this.status == OrderStatus.PAID) return;
+        validateStateTransition(OrderStatus.PENDING_PAYMENT, OrderStatus.PAID);
         this.status = OrderStatus.PAID;
     }
 
@@ -86,10 +100,16 @@ public class Order {
     }
 
     public void markAsCanceled() {
-        if (status != OrderStatus.PENDING_STOCK && status != OrderStatus.PENDING_PAYMENT) {
-            throw new InvalidOrderStateException("Order cannot be canceled.");
+        if (status == OrderStatus.SHIPPED || status == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStateException("Cannot cancel an order that has already been shipped.");
         }
         this.status = OrderStatus.CANCELED;
+    }
+
+    private void validateStateTransition(OrderStatus expected, OrderStatus target) {
+        if (this.status != expected) {
+            throw new InvalidOrderStateException(String.format("Invalid transition: Cannot go from %s to %s", this.status, target));
+        }
     }
 
 
@@ -122,7 +142,7 @@ public class Order {
     }
 
     public List<OrderItem> getItems() {
-        return items;
+        return Collections.unmodifiableList(items);
     }
 
     @Override
@@ -155,8 +175,6 @@ public class Order {
         private String consumerName;
         private String consumerEmail;
         private Address shippingAddress;
-        private List<OrderItem> items = new ArrayList<>();
-        private BigDecimal totalPrice;
 
         public OrderBuilder() {}
 
@@ -183,30 +201,15 @@ public class Order {
             return this;
         }
 
-        public OrderBuilder items(List<OrderItem> items) {
-            this.items.addAll(items);
-            return this;
-        }
-
-        public OrderBuilder totalPrice(BigDecimal totalPrice) {
-            this.totalPrice = totalPrice;
-            return this;
-        }
-
         public Order build() {
             if (consumerName.isBlank() ||
                 consumerEmail.isBlank() ||
-                shippingAddress == null ||
-                items.isEmpty() ||
-                totalPrice.compareTo(BigDecimal.ZERO) <= 0
-            ) { throw new DomainException("All Order core must be provided."); }
+                shippingAddress == null) { throw new DomainException("All Order core must be provided."); }
 
             return new Order(
                     this.consumerName,
                     this.consumerEmail,
-                    this.shippingAddress,
-                    this.items,
-                    this.totalPrice = totalPrice
+                    this.shippingAddress
             );
         }
     }
